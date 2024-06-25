@@ -49,12 +49,10 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http, RSAKey rsaKey) throws Exception {
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/anonymous*")
                         .anonymous()
-                        .requestMatchers("/login*",
-                                "/assets/**", "/vendors/**",
-                                "/oauth/**")
-                        .permitAll()
+                        .requestMatchers("/admin**")
+                        .authenticated()
                         .anyRequest()
-                        .authenticated())
+                        .permitAll())
                 .formLogin(formLogin -> formLogin.loginPage("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
