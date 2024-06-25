@@ -6,15 +6,15 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
-  flyway:
-    url: jdbc:mysql://localhost:3307/bbook
-    user: root
-    password: root
-    schemas: bbook
-    baseline-on-migrate: true
-    locations: classpath:db/migration
+#  flyway:
+#    url: jdbc:mysql://localhost:3307/bbook
+#    user: root
+#    password: root
+#    schemas: bbook
+#    baseline-on-migrate: true
+#    locations: classpath:db/migration
 
 server:
-  port: 8080
+  port: 8081

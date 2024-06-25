@@ -1,6 +1,7 @@
 package com.huuloc.bookstore.bbook.entity;
 
 import com.huuloc.bookstore.bbook.entity.common.BaseEntity;
+import com.huuloc.bookstore.bbook.entity.enums.Provider;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,10 @@ public class User extends BaseEntity {
     private String password;
     @Column(name = "email", unique = true)
     private String email;
+    @Column(name = "phone_number", unique = true)
+    private String phoneNumber;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Address> addresses;
     @Column(name = "name")
     private String fullName;
     private String birthday;
@@ -31,9 +36,20 @@ public class User extends BaseEntity {
     private boolean isUsing2FA;
     private String secret;
 
+    @Enumerated(EnumType.STRING)
+    private Provider provider;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Order> orders;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Coupon> coupons;
+
+    @ManyToOne
+    @JoinColumn(name = "avatar_id")
+    private Image avatar;
 }
