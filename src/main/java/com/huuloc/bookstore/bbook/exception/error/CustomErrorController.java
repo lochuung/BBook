@@ -14,7 +14,7 @@ public class CustomErrorController implements ErrorController {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 
         if (status != null) {
-            Integer statusCode = Integer.valueOf(status.toString());
+            int statusCode = Integer.parseInt(status.toString());
 
             if(statusCode == HttpStatus.NOT_FOUND.value()) {
                 return "error/404";
@@ -26,7 +26,6 @@ public class CustomErrorController implements ErrorController {
                 return "error/500";
             }
         }
-        assert status != null;
-        return status.toString();
+        return "error/500";
     }
 }
