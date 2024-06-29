@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="~{layouts/login-layout}"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block layout:fragment="content">
+    <div class="row vh-100 g-0">
+        <div class="col-lg-6 position-relative d-none d-lg-block">
+            <div class="bg-holder" style="background-image:url(/assets/img/bg/30.png);"></div>
+            <!--/.bg-holder-->
+        </div>
+        <div class="col-lg-6">
+            <div class="row flex-center h-100 g-0 px-4 px-sm-0">
+                <div class="col col-sm-6 col-lg-7 col-xl-6"><a class="d-flex flex-center text-decoration-none mb-4"
+                                                               href="/">
+                    <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block"><img
+                            th:src="@{/assets/logo/bbook.png}" alt="phoenix" width="58"/></div>
+                </a>
+                    <div class="text-center mb-7">
+                        <h3 class="text-body-highlight">Đăng nhập</h3>
+                        <p class="text-body-tertiary">Đăng nhập tài khoản của bạn</p>
+                    </div>
+                    <div class="alert alert-outline-danger d-flex text-center align-items-center" role="alert"
+                         th:if="${error != null}">
+                        <span class="fas fa-times-circle text-danger fs-5 me-3"></span>
+                        <p class="mb-0 flex-1" th:text="${error}"></p>
+                    </div>
+                    <a class="btn btn-phoenix-secondary w-100 mb-3" th:href="@{/oauth2/authorization/google}"><span
+                            class="fab fa-google text-danger me-2 fs-9"></span>Đăng nhập bằng Google
+                    </a>
+                    <a class="btn btn-phoenix-secondary w-100" th:href="@{/oauth2/authorization/facebook}"><span
+                            class="fab fa-facebook text-primary me-2 fs-9"></span>Đăng nhập bằng Facebook
+                    </a>
+                    <div class="position-relative">
+                        <hr class="bg-body-secondary mt-5 mb-4"/>
+                        <div class="divider-content-center">hoặc sử dụng mail</div>
+                    </div>
+                    <form th:action="@{/login}" method="post">
+                        <!--                    Email -->
+                        <div class="mb-3 text-start"><label class="form-label" for="email">Địa chỉ email</label>
+                            <div class="form-icon-container">
+                                <input class="form-control form-icon-input" id="email"
+                                       type="email"
+                                       placeholder="name@example.com"
+                                       name="email"/><span
+                                    class="fas fa-user text-body fs-9 form-icon"></span></div>
+                        </div>
+                        <!--                    Password-->
+                        <div class="mb-3 text-start"><label class="form-label" for="password">Mật khẩu</label>
+                            <div class="form-icon-container" data-password="data-password"><input
+                                    class="form-control form-icon-input pe-6" id="password" type="password"
+                                    placeholder="Mật khẩu" data-password-input="data-password-input"
+                                    name="password"/><span
+                                    class="fas fa-key text-body fs-9 form-icon"></span>
+                                <button class="btn px-3 py-0 h-100 position-absolute top-0 end-0 fs-7 text-body-tertiary"
+                                        data-password-toggle="data-password-toggle"><span
+                                        class="uil uil-eye show"></span><span class="uil uil-eye-slash hide"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <!--                    Remember Me-->
+                        <div class="row flex-between-center mb-7">
+                            <div class="col-auto">
+                                <div class="form-check mb-0">
+                                    <input class="form-check-input" id="basic-checkbox"
+                                           type="checkbox" checked="checked"
+                                           name="remember-me"/>
+                                    <label
+                                            class="form-check-label mb-0" for="basic-checkbox">Nhớ mật khẩu</label>
+                                </div>
+                            </div>
+                            <div class="col-auto"><a class="fs-9 fw-semibold"
+                                                     href="#">Quên mật
+                                khẩu?</a>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary w-100 mb-3" type="submit">Đăng nhập</button>
+                    </form>
+                    <div class="text-center"><a class="fs-9 fw-bold" href="/register">Tạo
+                        tài khoản</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

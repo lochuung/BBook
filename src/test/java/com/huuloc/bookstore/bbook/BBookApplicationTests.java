@@ -1,5 +1,6 @@
 package com.huuloc.bookstore.bbook;
 
+import com.huuloc.bookstore.bbook.util.SlugUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -8,6 +9,8 @@ class BBookApplicationTests {
 
 	@Test
 	void contextLoads() {
+		String result = SlugUtil.toSlug("Đây là sách");
+		assert result.equals("day-la-sach");
 	}
 
 }

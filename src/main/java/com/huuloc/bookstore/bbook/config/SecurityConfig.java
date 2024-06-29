@@ -1,23 +1,21 @@
 package com.huuloc.bookstore.bbook.config;
 
-import com.nimbusds.jose.jwk.JWKSet;
+import com.huuloc.bookstore.bbook.service.auth.CustomOAuth2User;
+import com.huuloc.bookstore.bbook.service.auth.UserService;
+import com.huuloc.bookstore.bbook.service.auth.CustomOAuth2UserService;
+import com.huuloc.bookstore.bbook.service.auth.CustomUserDetailsService;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.security.KeyPair;
@@ -27,31 +25,54 @@ import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 public class SecurityConfig {
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
+    @Autowired
+    private UserService userService;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(
-                auth -> {
-                    auth
-                            .requestMatchers("/api/auth/**").permitAll()
-                            .anyRequest().authenticated();
-                }
-        );
+    SecurityFilterChain securityFilterChain(HttpSecurity http, RSAKey rsaKey) throws Exception {
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/anonymous*")
+                        .anonymous()
+                        .requestMatchers("/admin**")
+                        .authenticated()
+                        .anyRequest()
+                        .permitAll())
+                .formLogin(formLogin -> formLogin.loginPage("/login")
+                        .usernameParameter("email")
+                        .passwordParameter("password")
+                        .failureUrl("/login?error=true"))
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .deleteCookies("JSESSIONID"));
 
         http.csrf(AbstractHttpConfigurer::disable);
 
-        http.sessionManagement(configurer ->
-                configurer.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS
-                )
+        http.oauth2Login(oauth2Login -> oauth2Login.loginPage("/login")
+                .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
+                        .userService(customOAuth2UserService))
+                .successHandler((request, response, authentication) -> {
+
+                    CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
+
+                    userService.processOAuthPostLogin(oauthUser);
+
+                    response.sendRedirect("/");
+                })
         );
 
-        http.oauth2ResourceServer(auth ->
-                auth.jwt(Customizer.withDefaults())
-        );
-
-//        http.oauth2Login(Customizer.withDefaults());
-
+        http.rememberMe(rememberMe -> {
+            try {
+                rememberMe.key(String.valueOf(rsaKey.toRSAPrivateKey()))
+                        .tokenValiditySeconds(86400)
+                        .rememberMeParameter("remember-me");
+            } catch (JOSEException e) {
+                throw new RuntimeException(e);
+            }
+        });
         return http.build();
     }
 
@@ -64,6 +85,14 @@ public class SecurityConfig {
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(customUserDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        return daoAuthenticationProvider;
     }
 
     @Bean
@@ -81,22 +110,22 @@ public class SecurityConfig {
                 .build();
     }
 
-    @Bean
-    JWKSource<SecurityContext> jwkSource(RSAKey rsaKey) {
-        return (jwkSelector, securityContext) -> jwkSelector.select(
-                new JWKSet(rsaKey)
-        );
-    }
-
-    @Bean
-    public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
-        return new NimbusJwtEncoder(jwkSource);
-    }
-
-    @Bean
-    public JwtDecoder jwtDecoder(KeyPair keyPair) {
-        return NimbusJwtDecoder
-                .withPublicKey((RSAPublicKey) keyPair.getPublic())
-                .build();
-    }
+//    @Bean
+//    JWKSource<SecurityContext> jwkSource(RSAKey rsaKey) {
+//        return (jwkSelector, securityContext) -> jwkSelector.select(
+//                new JWKSet(rsaKey)
+//        );
+//    }
+//
+//    @Bean
+//    public JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
+//        return new NimbusJwtEncoder(jwkSource);
+//    }
+//
+//    @Bean
+//    public JwtDecoder jwtDecoder(KeyPair keyPair) {
+//        return NimbusJwtDecoder
+//                .withPublicKey((RSAPublicKey) keyPair.getPublic())
+//                .build();
+//    }
 }

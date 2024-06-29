@@ -1,33 +1,25 @@
 package com.huuloc.bookstore.bbook.controller.auth;
 
-import com.huuloc.bookstore.bbook.controller.auth.dto.AuthenticationResponse;
-import com.huuloc.bookstore.bbook.controller.auth.dto.LoginRequest;
-import com.huuloc.bookstore.bbook.service.auth.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@RestController
-@RequestMapping("/api/auth")
+@Controller
 public class AuthenticationController {
-    @Autowired
-    private AuthenticationService authenticationService;
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authenticationService.authenticate(loginRequest));
-    }
-
-    @PostMapping("/refresh-token")
-    public ResponseEntity<AuthenticationResponse> refreshToken(HttpServletRequest request,
-                                                               HttpServletResponse response) {
-        String refreshToken = request.getHeader("Authorization")
-                .replace("Bearer ", "");
-        return ResponseEntity.ok(authenticationService.refresh(refreshToken));
+    @GetMapping({"/login"})
+    public String getLoginPage(@RequestParam(name = "error", required = false) String error,
+                               Authentication authentication,
+                               Model model) {
+        if (authentication != null) {
+            return "redirect:/";
+        }
+        if (error != null) {
+            model.addAttribute("error", "Đăng nhập không thành công!");
+        }
+        return "login";
     }
 }
