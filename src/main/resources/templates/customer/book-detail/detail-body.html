@@ -1,0 +1,281 @@
+<!doctype html >
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+>
+<section class="py-0">
+    <div class="container-small">
+        <ul class="nav nav-underline fs-9 mb-4" id="productTab" role="tablist">
+            <li class="nav-item"><a class="nav-link active" id="description-tab" data-bs-toggle="tab"
+                                    href="#tab-description" role="tab" aria-controls="tab-description"
+                                    aria-selected="true">Mô tả</a></li>
+            <li class="nav-item"><a class="nav-link" id="specification-tab" data-bs-toggle="tab"
+                                    href="#tab-specification" role="tab" aria-controls="tab-specification"
+                                    aria-selected="false">Chi tiết</a></li>
+            <li class="nav-item"><a class="nav-link" id="reviews-tab" data-bs-toggle="tab"
+                                    href="#tab-reviews" role="tab" aria-controls="tab-reviews" aria-selected="false">Đánh
+                giá</a></li>
+        </ul>
+        <div class="row gx-3 gy-7">
+            <div class="col-12 col-lg-12 col-xl-12">
+                <div class="tab-content" id="productTabContent">
+
+                    <!--                    DESCRIPTION-->
+
+                    <div class="tab-pane pe-lg-6 pe-xl-12 fade show active text-body-emphasis"
+                         id="tab-description" role="tabpanel" aria-labelledby="description-tab"
+                         th:text="${book.description}">
+                        Mô tả nè
+                    </div>
+
+                    <!--                    DETAIL-->
+
+                    <div class="tab-pane pe-lg-6 pe-xl-12 fade" id="tab-specification" role="tabpanel"
+                         aria-labelledby="specification-tab">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th style="width: 40%"></th>
+                                <th style="width: 60%"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="bg-body-highlight align-middle">
+                                    <h6 class="mb-0 text-body text-uppercase fw-bolder px-4 fs-9 lh-sm">
+                                        Tiêu đề</h6>
+                                </td>
+                                <td class="px-5 mb-0" th:text="${book.title}"></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-body-highlight align-middle">
+                                    <h6 class="mb-0 text-body text-uppercase fw-bolder px-4 fs-9 lh-sm">
+                                        Mã số tiêu chuẩn quốc tế (ISBN)</h6>
+                                </td>
+                                <td class="px-5 mb-0" th:text="${book.isbn}"></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-body-highlight align-middle">
+                                    <h6 class="mb-0 text-body text-uppercase fw-bolder px-4 fs-9 lh-sm">
+                                        Số trang</h6>
+                                </td>
+                                <td class="px-5 mb-0" th:text="${book.pageCount}"></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-body-highlight align-middle">
+                                    <h6 class="mb-0 text-body text-uppercase fw-bolder px-4 fs-9 lh-sm">
+                                        Ngày phát hành</h6>
+                                </td>
+                                <td class="px-5 mb-0" th:text="${#temporals.format(book.publishedDate, 'dd/MM/yyyy')}">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-body-highlight align-middle">
+                                    <h6 class="mb-0 text-body text-uppercase fw-bolder px-4 fs-9 lh-sm">
+                                        Tác giả</h6>
+                                </td>
+                                <td class="px-5 mb-0">
+                                    <ul>
+                                        <li th:each="author : ${book.authors}" th:text="${author.name}"></li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="bg-body-highlight align-middle">
+                                    <h6 class="mb-0 text-body text-uppercase fw-bolder px-4 fs-9 lh-sm">
+                                        Thể loại</h6>
+                                </td>
+                                <td class="px-5 mb-0">
+                                    <ul>
+                                        <li th:each="genre : ${book.genres}">
+                                            <a th:href="@{/genre/{genreId}(genreId=${genre.slug})}"
+                                               th:text="${genre.name}">
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!--                    REVIEW-->
+
+                    <div class="tab-pane fade" id="tab-reviews" role="tabpanel"
+                         aria-labelledby="reviews-tab">
+                        <div class="bg-body-emphasis rounded-3 p-4 border border-translucent">
+                            <div class="row g-3 justify-content-between mb-4">
+                                <div class="col-auto" th:with="nonStars=${5 - book.averageRating}">
+                                    <div class="d-flex align-items-center flex-wrap">
+                                        <h2 class="fw-bolder me-3" th:inline="text">
+                                            [[${#numbers.formatDecimal(book.averageRating, 1, 'COMMA', 1,
+                                            'POINT')}]]<span
+                                                class="fs-8 text-body-quaternary fw-bold">/5</span></h2>
+                                        <div class="me-3">
+                                            <span th:each="i : ${#numbers.sequence(1, book.averageRating, 1)}"
+                                                  class="fa fa-star text-warning"></span>
+                                            <span th:each="i : ${#numbers.sequence(1, nonStars, 1)}"
+                                                  class="fa-regular fa-star text-warning-light"></span>
+                                        </div>
+                                        <p class="text-body mb-0 fw-semibold fs-7"
+                                           th:text="${book.totalRating + ' đánh giá'}"></p>
+                                    </div>
+                                </div>
+
+<!--                                WRITE REVIEW-->
+
+                                <div class="col-auto" sec:authorize="isAuthenticated()">
+                                    <button class="btn btn-primary rounded-pill"
+                                            data-bs-toggle="modal" data-bs-target="#reviewModal">
+                                        Đánh giá
+                                    </button>
+                                    <div class="modal fade" id="reviewModal" tabindex="-1"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content p-4">
+                                                <div class="d-flex flex-between-center mb-2">
+                                                    <h5 class="modal-title fs-8 mb-0">Đánh giá của bạn</h5>
+                                                    <button class="btn p-0 fs-10">Clear</button>
+                                                </div>
+                                                <div class="mb-3" data-rater='{"starSize":32,"step":0.5}'>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <h5 class="text-body-highlight mb-3">Your review</h5>
+                                                    <textarea class="form-control" id="reviewTextarea"
+                                                              rows="5"
+                                                              placeholder="Write your review"> </textarea>
+                                                </div>
+                                                <div class="dropzone dropzone-multiple p-0 mb-3"
+                                                     id="my-awesome-dropzone" data-dropzone>
+                                                    <div class="fallback"><input name="file" type="file"
+                                                                                 multiple></div>
+                                                    <div class="dz-preview d-flex flex-wrap">
+                                                        <div class="border border-translucent bg-body-emphasis rounded-3 d-flex flex-center position-relative me-2 mb-2"
+                                                             style="height:80px;width:80px;"><img
+                                                                class="dz-image"
+                                                                src="../../../assets/img/products/23.png"
+                                                                alt="..." data-dz-thumbnail><a
+                                                                class="dz-remove text-body-quaternary"
+                                                                href="#!" data-dz-remove><span
+                                                                data-feather="x"></span></a></div>
+                                                    </div>
+                                                    <div class="dz-message text-body-tertiary text-opacity-85 fw-bold fs-9 p-4"
+                                                         data-dz-message> Drag your photo here <span
+                                                            class="text-body-secondary">or </span>
+                                                        <button
+                                                                class="btn btn-link p-0">Browse from device
+                                                        </button>
+                                                        <br><img class="mt-3 me-2"
+                                                                 src="../../../assets/img/icons/image-icon.png"
+                                                                 width="24" alt=""></div>
+                                                </div>
+                                                <div class="d-sm-flex flex-between-center">
+                                                    <div class="form-check flex-1"><input
+                                                            class="form-check-input" id="reviewAnonymously"
+                                                            type="checkbox" value="" checked=""><label
+                                                            class="form-check-label mb-0 text-body-emphasis fw-semibold"
+                                                            for="reviewAnonymously">Review
+                                                        anonymously</label></div>
+                                                    <button
+                                                            class="btn ps-0"
+                                                            data-bs-dismiss="modal">Close
+                                                    </button>
+                                                    <button
+                                                            class="btn btn-primary rounded-pill">Submit
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+<!--                            SHOW REVIEW-->
+
+                            <div class="mb-4 hover-actions-trigger btn-reveal-trigger">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="mb-2"><span class="fa fa-star text-warning"></span><span
+                                            class="fa fa-star text-warning"></span><span
+                                            class="fa fa-star text-warning"></span><span
+                                            class="fa fa-star text-warning"></span><span
+                                            class="fa fa-star text-warning"></span><span
+                                            class="text-body-secondary ms-1"> by</span> Zingko Kudobum</h5>
+                                    <div class="btn-reveal-trigger position-static">
+                                        <button
+                                                class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal"
+                                                type="button" data-bs-toggle="dropdown" data-boundary="window"
+                                                aria-haspopup="true" aria-expanded="false"
+                                                data-bs-reference="parent"><span
+                                                class="fas fa-ellipsis-h fs-10"></span></button>
+                                        <div class="dropdown-menu dropdown-menu-end py-2"><a
+                                                class="dropdown-item" href="#!">View</a><a
+                                                class="dropdown-item" href="#!">Export</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a
+                                                    class="dropdown-item text-danger" href="#!">Remove</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-body-tertiary fs-9 mb-1">35 mins ago</p>
+                                <p class="text-body-highlight mb-3">100% satisfied</p>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-auto"><a
+                                            href="../../../assets/img/e-commerce/review-11.jpg"
+                                            data-gallery="gallery-0"><img
+                                            src="../../../assets/img/e-commerce/review-11.jpg" alt=""
+                                            height="164"/></a></div>
+                                    <div class="col-auto"><a
+                                            href="../../../assets/img/e-commerce/review-12.jpg"
+                                            data-gallery="gallery-0"><img
+                                            src="../../../assets/img/e-commerce/review-12.jpg" alt=""
+                                            height="164"/></a></div>
+                                    <div class="col-auto"><a
+                                            href="../../../assets/img/e-commerce/review-13.jpg"
+                                            data-gallery="gallery-0"><img
+                                            src="../../../assets/img/e-commerce/review-13.jpg" alt=""
+                                            height="164"/></a></div>
+                                </div>
+                                <div class="d-flex"><span class="fas fa-reply fa-rotate-180 me-2"></span>
+                                    <div>
+                                        <h5>Respond from store<span class="text-body-tertiary fs-9 ms-2">5
+                                                            mins ago</span></h5>
+                                        <p class="text-body-highlight mb-0">Thank you for your valuable
+                                            feedback</p>
+                                    </div>
+                                </div>
+                                <div class="hover-actions top-0">
+                                    <button
+                                            class="btn btn-sm btn-phoenix-secondary me-2"><span
+                                            class="fas fa-thumbs-up"></span></button>
+                                    <button
+                                            class="btn btn-sm btn-phoenix-secondary me-1"><span
+                                            class="fas fa-thumbs-down"></span></button>
+                                </div>
+                            </div>
+
+
+                            <div class="d-flex justify-content-center">
+                                <nav>
+                                    <ul class="pagination mb-0">
+                                        <li class="page-item"><a class="page-link" href="#!"><span
+                                                class="fas fa-chevron-left"> </span></a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!">3</a></li>
+                                        <li class="page-item active"><a class="page-link" href="#!">4</a>
+                                        </li>
+                                        <li class="page-item"><a class="page-link" href="#!">5</a></li>
+                                        <li class="page-item"><a class="page-link" href="#!"><span
+                                                class="fas fa-chevron-right"></span></a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- end of .container-->
+</section>
+</html>

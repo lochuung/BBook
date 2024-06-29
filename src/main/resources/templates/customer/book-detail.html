@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="content">
+    <main class="main" id="top">
+        <div class="pt-5 pb-9">
+            <div th:replace="~{/customer/book-detail/detail-header}"></div>
+            <div th:replace="~{/customer/book-detail/detail-body}"></div>
+        </div>
+    </main>
+</th:block>
+</html>

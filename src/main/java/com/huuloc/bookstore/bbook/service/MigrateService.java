@@ -61,6 +61,9 @@ public class MigrateService {
                 Author authorEntity = Author.builder()
                         .name((String) author)
                         .build();
+                if (StringUtils.isEmpty(authorEntity.getName())) {
+                    return;
+                }
                 Author existed = authorRepository.findByName(authorEntity.getName());
                 if (existed != null) {
                     finalAuthors.add(existed);

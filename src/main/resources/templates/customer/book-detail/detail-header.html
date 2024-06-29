@@ -1,0 +1,101 @@
+<!doctype html >
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<section class="py-0">
+    <div class="container-small">
+        <div class="row g-5 mb-5 mb-lg-8" data-product-details="data-product-details">
+            <div class="col-12 col-lg-6">
+                <div class="row g-3 mb-3">
+                    <div class="col-12 col-md-2 col-lg-12 col-xl-2">
+                        <div class="swiper-products-thumb swiper swiper theme-slider overflow-visible"
+                             id="swiper-products-thumb"></div>
+                    </div>
+                    <div class="col-12 col-md-10 col-lg-12 col-xl-10">
+                        <div
+                                class="d-flex align-items-center border border-translucent rounded-3 text-center p-5 h-100">
+                            <div class="swiper swiper theme-slider"
+                                 data-thumb-target="swiper-products-thumb"
+                                 data-products-swiper='{"slidesPerView":1,"spaceBetween":16,"thumbsEl":".swiper-products-thumb"}'>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex"><button
+                        class="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8"><span
+                        class="fas fa-shopping-cart me-2"></span>Mua ngay</button></div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="d-flex flex-column justify-content-between h-100">
+                    <div>
+                        <div class="d-flex flex-wrap">
+                            <div class="me-2"><span class="fa fa-star text-warning"></span><span
+                                    class="fa fa-star text-warning"></span><span
+                                    class="fa fa-star text-warning"></span><span
+                                    class="fa fa-star text-warning"></span><span
+                                    class="fa fa-star text-warning"></span></div>
+                            <p class="text-primary fw-semibold mb-2">6548 đánh giá</p>
+                        </div>
+                        <h3 class="mb-3 lh-sm" th:text="${book.title}">Tiêu đề</h3>
+                        <div class="d-flex flex-wrap align-items-center">
+                            <h1 class="me-3">[[${#numbers.formatDecimal(book.price, 0, 'POINT', 0,
+                                'COMMA')}]] ₫</h1>
+                        </div>
+                        <p class="text-success fw-semibold fs-7 mb-2" th:inline="text"><b>Còn lại: </b>[[${book.availableQuantity}]] cuốn</p>
+                        <p class="mb-2 text-body-secondary" th:text="${book.shortDescription}">
+                        </p>
+                        <p class="text-danger-dark fw-bold mb-5 mb-lg-0" th:inline="text">
+                            <b>Đã bán: </b> [[${book.totalSold}]] cuốn</p>
+                    </div>
+                    <div>
+                        <div class="mb-3">
+                            <div class="d-flex product-color-variants"
+                                 data-product-color-variants="data-product-color-variants">
+                                <div class="rounded-1 border border-translucent me-2 active"
+                                     data-variant="Blue"
+                                     data-th-attr="data-products-images=${images}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 g-sm-5 align-items-end">
+                            <div class="col-12 col-sm">
+                                <p class="fw-semibold mb-2 text-body">Số lượng : </p>
+                                <div class="d-flex justify-content-between align-items-end">
+                                    <div class="d-flex flex-between-center" data-quantity="data-quantity">
+                                        <button class="btn btn-phoenix-primary px-3" data-type="minus"><span
+                                                class="fas fa-minus"></span></button>
+                                        <input
+                                                name="quantity"
+                                                required="true"
+                                            class="form-control text-center input-spin-none bg-transparent border-0 outline-none"
+                                            style="width:50px;" type="number" min="1" value="1"
+                                            data-th-attr="max=${book.availableQuantity}"
+                                        />
+                                        <button
+                                            class="btn btn-phoenix-primary px-3" data-type="plus"><span
+                                            class="fas fa-plus"></span></button>
+                                    </div><button class="btn btn-phoenix-primary px-3 border-0"><span
+                                        class="fas fa-share-alt fs-7"></span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- end of .container-->
+</section>
+<script>
+    document.querySelector('input').addEventListener('change', e=>{
+        const el = e.target || e
+
+        if(el.type == "number" && el.max && el.min ){
+            let value = parseInt(el.value)
+            el.value = value // for 000 like input cleanup to 0
+            let max = parseInt(el.max)
+            let min = parseInt(el.min)
+            if ( value > max ) el.value = el.max
+            if ( value < min ) el.value = el.min
+        }
+    });
+</script>
+</html>

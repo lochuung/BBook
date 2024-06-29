@@ -11,4 +11,6 @@ public interface BookService {
     List<Book> search(SearchRequest searchRequest);
 
     TopBooksDto getTopBooks(Integer limit);
+
+    Book findBySlug(String slug);
 }
