@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<!-- ============================================-->
+<!-- <section> begin ============================-->
+<section class="py-0">
+    <div class="container-small">
+        <div class="ecommerce-topbar">
+            <nav class="navbar navbar-expand-lg navbar-light px-0">
+                <div class="row gx-0 gy-2 w-100 flex-between-center">
+                    <div class="col-auto"><a class="text-decoration-none" href="/">
+                        <div class="d-flex align-items-center"><img src="/assets/logo/bbook.png"
+                                                                    alt="phoenix" width="27"/>
+                            <h5 class="logo-text ms-2">BBook</h5>
+                        </div>
+                    </a></div>
+                    <div class="col-auto order-md-1">
+                        <ul class="navbar-nav navbar-nav-icons flex-row me-n2">
+                            <li class="nav-item d-flex align-items-center">
+                                <div class="theme-control-toggle fa-icon-wait px-2"><input
+                                        class="form-check-input ms-0 theme-control-toggle-input" type="checkbox"
+                                        data-theme-control="phoenixTheme" value="dark"
+                                        id="themeControlToggle"/><label
+                                        class="mb-0 theme-control-toggle-label theme-control-toggle-light"
+                                        for="themeControlToggle" data-bs-toggle="tooltip"
+                                        data-bs-placement="left" data-bs-title="Switch theme"
+                                        style="height:32px;width:32px;"><span class="icon"
+                                                                              data-feather="moon"></span></label><label
+                                        class="mb-0 theme-control-toggle-label theme-control-toggle-dark"
+                                        for="themeControlToggle" data-bs-toggle="tooltip"
+                                        data-bs-placement="left" data-bs-title="Switch theme"
+                                        style="height:32px;width:32px;"><span class="icon"
+                                                                              data-feather="sun"></span></label></div>
+                            </li>
+                            <li class="nav-item"><a class="nav-link px-2 icon-indicator icon-indicator-primary"
+                                                    href="/cart" role="button"><span class="text-body-tertiary"
+                                                                                     data-feather="shopping-cart"
+                                                                                     style="height:20px;width:20px;"></span><span
+                                    class="icon-indicator-number">0</span></a></li>
+                            <!--                        User Dropdown    -->
+                            <li class="nav-item dropdown"
+                            ><a class="nav-link px-2" id="navbarDropdownUser"
+                                href="#" role="button" data-bs-toggle="dropdown"
+                                data-bs-auto-close="outside" aria-haspopup="true"
+                                aria-expanded="false"><span class="text-body-tertiary"
+                                                            data-feather="user"
+                                                            style="height:20px;width:20px;"></span></a>
+                                <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border mt-2"
+                                     aria-labelledby="navbarDropdownUser">
+                                    <div class="card position-relative border-0">
+                                        <div class="card-body p-0" sec:authorize="isAuthenticated()">
+                                            <div class="text-center pt-4 pb-3">
+                                                <!--                                                Avatar-->
+                                                <div class="avatar avatar-xl ">
+                                                    <img class="rounded-circle "
+                                                         src="/assets/img/user.png" alt=""/>
+                                                </div>
+                                                <h6 class="mt-2 text-body-emphasis" sec:authentication="name">Nguyen Huu
+                                                    Loc</h6>
+                                            </div>
+                                        </div>
+                                        <div class="overflow-auto scrollbar" style="height: 5rem;"
+                                             sec:authorize="isAuthenticated()">
+                                            <ul class="nav d-flex flex-column mb-2 pb-1">
+                                                <li class="nav-item"><a class="nav-link px-3 d-block" href="#!">
+                                                                <span class="me-2 text-body align-bottom"
+                                                                      data-feather="user"></span><span>Sửa thông
+                                                                    tin</span></a></li>
+                                                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link px-3 d-block"
+                                                                        href="#!"><span
+                                                        class="me-2 text-body align-bottom"
+                                                        data-feather="pie-chart"></span>Dashboard</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer p-0 pt-1 border-top border-translucent">
+                                            <div class="px-3">
+                                                <form th:action="@{/logout}" sec:authorize="isAuthenticated()"
+                                                      method="post">
+                                                    <button type="submit"
+                                                            class="btn btn-phoenix-secondary d-flex flex-center w-100"
+                                                            href="/logout"> <span class="me-2" data-feather="log-out">
+                                                            </span>Đăng xuất
+                                                    </button>
+                                                </form>
+                                                <a sec:authorize="!isAuthenticated()"
+                                                   class="btn btn-phoenix-secondary d-flex flex-center w-100"
+                                                   href="/login"> <span class="me-2" data-feather="log-in">
+                                                            </span>Đăng nhập</a>
+                                            </div>
+                                            <div class="my-2 text-center fw-bold fs-10 text-body-quaternary">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="search-box ecommerce-search-box w-100">
+                            <form class="position-relative"><input
+                                    class="form-control search-input search form-control-sm" type="search"
+                                    placeholder="Search" aria-label="Search"/>
+                                <span class="fas fa-search search-box-icon"></span>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div><!-- end of .container-->
+</section>
+<!-- <section> close ============================-->
+<!-- ============================================-->
+
+<nav class="ecommerce-navbar navbar-expand navbar-light bg-body-emphasis justify-content-between">
+    <div class="container-small d-flex flex-between-center" data-navbar="data-navbar">
+        <div class="dropdown">
+            <button
+                    class="btn text-body ps-0 pe-5 text-nowrap dropdown-toggle dropdown-caret-none"
+                    data-category-btn="data-category-btn" data-bs-toggle="dropdown"><span
+                    class="fas fa-bars me-2"></span>Thể loại
+            </button>
+            <div class="dropdown-menu border border-translucent py-0 category-dropdown-menu">
+                <div class="card border-0 scrollbar" style="max-height: 657px;">
+                    <div class="card-body p-6 pb-3">
+                        <div class="row gx-7 gy-5 mb-5">
+                            <!--/*@thymesVar id="genres" type="java.util.List<com.huuloc.bookstore.bbook.entity.Genre>"*/-->
+                            <th:block th:each="genre : ${genres}">
+                                <div class="col-12 col-sm-6 col-md-4 text-center">
+                                    <div class="ms-n2">
+                                        <a class="text-body-emphasis d-block mb-1 text-decoration-none bg-body-highlight-hover px-2 py-1 rounded-2"
+                                           th:href="${'genres/' + genre?.slug}"
+                                           th:text="${genre?.name}"></a>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="navbar-nav justify-content-end align-items-center">
+            <li class="nav-item" data-nav-item="data-nav-item"><a class="nav-link ps-0 active"
+                                                                  href="/">Trang chủ</a></li>
+            <li class="nav-item" data-nav-item="data-nav-item"><a class="nav-link"
+                                                                  href="/">Tìm sách</a></li>
+        </ul>
+    </div>
+</nav>
+</html>

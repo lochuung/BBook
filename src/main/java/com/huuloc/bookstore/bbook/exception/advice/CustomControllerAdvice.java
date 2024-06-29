@@ -18,9 +18,6 @@
 //@ResponseBody
 //@Order(Ordered.HIGHEST_PRECEDENCE)
 //public class CustomControllerAdvice extends ResponseEntityExceptionHandler {
-//
-//
-//
 //    @ExceptionHandler({BadRequestException.class})
 //    public ResponseEntity<Object> badRequest(BadRequestException e) {
 //        logger.error(e.getMessage(), e.getCause());

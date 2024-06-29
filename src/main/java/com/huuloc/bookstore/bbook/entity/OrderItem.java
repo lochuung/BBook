@@ -1,9 +1,10 @@
 package com.huuloc.bookstore.bbook.entity;
 
+import com.huuloc.bookstore.bbook.entity.common.BaseEntity;
 import jakarta.persistence.*;
 
 @Entity(name = "order_items")
-public class OrderItem {
+public class OrderItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;

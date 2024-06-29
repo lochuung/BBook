@@ -1,5 +1,6 @@
 package com.huuloc.bookstore.bbook.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.huuloc.bookstore.bbook.entity.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,10 @@ public class Genre extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(unique = true)
+    private String slug;
 
-    @OneToMany(mappedBy = "genre")
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Collection<Book> books;
 }
