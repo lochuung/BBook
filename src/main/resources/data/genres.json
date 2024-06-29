@@ -1,0 +1,44 @@
+{
+  "genres": [
+    {
+      "name": "Sách Tâm Lý",
+      "slug": "sach-tam-ly"
+    },
+    {
+      "name": "Sách Kinh Tế",
+      "slug": "sach-kinh-te"
+    },
+    {
+      "name": "Sách Kỹ Năng",
+      "slug": "sach-ky-nang"
+    },
+    {
+      "name": "Sách Văn Học",
+      "slug": "sach-van-hoc"
+    },
+    {
+      "name": "Sách Lịch Sử",
+      "slug": "sach-lich-su"
+    },
+    {
+      "name": "Sách Khoa Học",
+      "slug": "sach-khoa-hoc"
+    },
+    {
+      "name": "Sách Tôn Giáo",
+      "slug": "sach-ton-giao"
+    },
+    {
+      "name": "Sách Tự Truyện",
+      "slug": "sach-tu-truyen"
+    },
+    {
+      "name": "Sách Học Ngoại Ngữ",
+      "slug": "sach-hoc-ngoai-ngu"
+    },
+    {
+      "name": "Sách Tham Khảo",
+      "slug": "sach-tham-khao"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+<!doctype html >
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div class="row flex-center mb-15 mt-11 gy-6"  sec:authorize="!isAuthenticated()">
+    <div class="col-auto"><img class="d-dark-none"
+                               src="/assets/img/spot-illustrations/light_30.png" alt=""
+                               width="305"/><img
+            class="d-light-none" src="/assets/img/spot-illustrations/dark_30.png" alt=""
+            width="305"/></div>
+    <div class="col-auto">
+        <div class="text-center text-lg-start">
+            <h3 class="text-body-highlight mb-2"><span class="fw-semibold">Bạn có muốn trở thành
+                                    </span>khách hàng <br class="d-md-none"/>thân thiết?</h3>
+            <h1 class="display-3 fw-semibold mb-4">Tham gia <span
+                    class="text-primary fw-bolder">BBook </span><br/>ngay hôm nay!</h1><a
+                class="btn btn-lg btn-primary px-7"
+                href="/register">Đăng ký<span
+                class="fas fa-chevron-right ms-2 fs-9"></span></a>
+        </div>
+    </div>
+</div>
+</html>
