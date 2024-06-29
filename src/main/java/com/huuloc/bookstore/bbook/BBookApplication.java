@@ -1,6 +1,6 @@
 package com.huuloc.bookstore.bbook;
 
-import com.huuloc.bookstore.bbook.service.UserService;
+import com.huuloc.bookstore.bbook.service.MigrateService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,9 +15,10 @@ public class BBookApplication {
 	}
 
 	@Bean
-	CommandLineRunner commandLineRunner(UserService userService) {
+	CommandLineRunner commandLineRunner(MigrateService migrateService) {
 		return args -> {
-			userService.createTestingData();
+			migrateService.migrateBooksData();
+			migrateService.migrateUsersData();
 		};
 	}
 

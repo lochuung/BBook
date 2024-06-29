@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="scripts">
+    <script th:src="@{/assets/api/homepage.js}"></script>
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="ecommerce-homepage pt-5 mb-9">
+        <!-- ============================================-->
+        <!-- <section> begin ============================-->
+        <section class="py-0 px-xl-3">
+            <div class="container px-xl-0 px-xxl-3">
+                <th:block th:replace="~{/customer/homepage/topsell}"></th:block>
+                <th:block th:replace="~{/customer/homepage/topnew}"></th:block>
+                <th:block th:replace="~{/customer/homepage/toprate}"></th:block>
+                <div th:replace="~{/customer/homepage/signup}"></div>
+            </div>
+            <!-- end of .container-->
+        </section><!-- <section> close ============================-->
+        <!-- ============================================-->
+    </div>
+</th:block>
+</html>

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
     <meta charset="utf-8">
@@ -398,11 +397,9 @@
 <!--    Main Content-->
 <!-- ===============================================-->
 <main class="main" id="top">
-    <div th:replace="~{fragments/navbar}"></div>
     <div layout:fragment="content">
         <p>Content goes here...</p>
     </div>
-    <div th:replace="~{fragments/footer}"></div>
 </main><!-- ===============================================-->
 <!--    End of Main Content-->
 <!-- ===============================================-->
@@ -412,10 +409,6 @@
 <!-- ===============================================-->
 <!--    JavaScripts-->
 <!-- ===============================================-->
-<script th:inline="javascript">
-    var baseUrl = /*[[${baseUrl}]]*/"";
-</script>
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="/vendors/popper/popper.min.js"></script>
 <script src="/vendors/bootstrap/bootstrap.min.js"></script>
 <script src="/vendors/anchorjs/anchor.min.js"></script>
@@ -428,10 +421,6 @@
 <script src="/vendors/dayjs/dayjs.min.js"></script>
 <script src="/assets/js/phoenix.js"></script>
 <script src="/vendors/swiper/swiper-bundle.min.js"></script>
-
-<div layout:fragment="scripts">
-</div>
-
 </body>
 
 </html>

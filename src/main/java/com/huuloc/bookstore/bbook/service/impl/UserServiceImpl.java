@@ -7,7 +7,8 @@ import com.huuloc.bookstore.bbook.entity.enums.Provider;
 import com.huuloc.bookstore.bbook.repository.PrivilegeRepository;
 import com.huuloc.bookstore.bbook.repository.RoleRepository;
 import com.huuloc.bookstore.bbook.repository.UserRepository;
-import com.huuloc.bookstore.bbook.service.UserService;
+import com.huuloc.bookstore.bbook.service.auth.CustomOAuth2User;
+import com.huuloc.bookstore.bbook.service.auth.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,7 +46,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void processOAuthPostLogin(String email) {
+    public void processOAuthPostLogin(CustomOAuth2User customOAuth2User) {
+        String email = customOAuth2User.getEmail();
+        String name = customOAuth2User.getName();
+
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isEmpty()) {
             // add new user
@@ -54,12 +58,11 @@ public class UserServiceImpl implements UserService {
             );
             User newUser = User.builder().email(email)
                     .roles(Collections.singletonList(roleUser))
+                    .fullName(name)
                     .provider(Provider.OAUTH2)
                     .enabled(true)
-
                     .build();
             userRepository.save(newUser);
-            return;
         }
     }
 }

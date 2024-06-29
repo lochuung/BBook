@@ -1,5 +1,6 @@
 package com.huuloc.bookstore.bbook.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.huuloc.bookstore.bbook.entity.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,11 +19,7 @@ public class Author extends BaseEntity {
     private String description;
     private String image;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "book_authors",
-            joinColumns = @JoinColumn(name = "author_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id")
-    )
-    private java.util.Set<Book> books;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "authors")
+    @JsonIgnore
+    private java.util.List<Book> books;
 }
