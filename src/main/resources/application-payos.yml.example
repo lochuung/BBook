@@ -1,0 +1,4 @@
+payos:
+  client-id: your-client-id
+  api-key: your-api-key
+  checksum-key: your-checksum-key
