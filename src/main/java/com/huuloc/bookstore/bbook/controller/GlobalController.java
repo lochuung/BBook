@@ -1,9 +1,12 @@
 package com.huuloc.bookstore.bbook.controller;
 
 import com.huuloc.bookstore.bbook.entity.Genre;
+import com.huuloc.bookstore.bbook.entity.Order;
 import com.huuloc.bookstore.bbook.service.GenreService;
+import com.huuloc.bookstore.bbook.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,6 +19,8 @@ import java.util.List;
 public class GlobalController {
     @Autowired
     private GenreService genreService;
+    @Autowired
+    private OrderService orderService;
 
     @Value("${server.port:8080}")
     private String serverPort;
@@ -34,4 +39,8 @@ public class GlobalController {
         return baseHostUrl + ":" + serverPort;
     }
 
+    @ModelAttribute("pendingOrder")
+    public Order getPendingOrder() {
+        return orderService.getPendingOrder();
+    }
 }

@@ -33,11 +33,12 @@
                                         style="height:32px;width:32px;"><span class="icon"
                                                                               data-feather="sun"></span></label></div>
                             </li>
-                            <li class="nav-item"><a class="nav-link px-2 icon-indicator icon-indicator-primary"
+                            <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link px-2 icon-indicator icon-indicator-primary"
                                                     href="/cart" role="button"><span class="text-body-tertiary"
                                                                                      data-feather="shopping-cart"
-                                                                                     style="height:20px;width:20px;"></span><span
-                                    class="icon-indicator-number">0</span></a></li>
+                                                                                     style="height:20px;width:20px;"></span><!--/*@thymesVar id="pendingOrder" type="com.huuloc.bookstore.bbook.entity.Order"*/-->
+                                                                                     <span
+                                    class="icon-indicator-number" th:text="${#lists.size(pendingOrder.orderItems)}"></span></a></li>
                             <!--                        User Dropdown    -->
                             <li class="nav-item dropdown"
                             ><a class="nav-link px-2" id="navbarDropdownUser"
@@ -100,7 +101,7 @@
                         <div class="search-box ecommerce-search-box w-100">
                             <form class="position-relative"><input
                                     class="form-control search-input search form-control-sm" type="search"
-                                    placeholder="Search" aria-label="Search"/>
+                                    placeholder="Tìm kiếm..." aria-label="Tìm kiếm..."/>
                                 <span class="fas fa-search search-box-icon"></span>
                             </form>
                         </div>

@@ -19,6 +19,9 @@ public class Order extends BaseEntity {
 
     @PrePersist
     public void prePersist() {
+        if (this.orderItems == null)
+            this.orderItems = new java.util.ArrayList<>();
+
         if (this.state == null)
             this.state = OrderState.PENDING;
 
@@ -28,11 +31,14 @@ public class Order extends BaseEntity {
         if (this.totalPrice == null)
             this.totalPrice = 0.0;
 
-        if (this.totalPriceAfterDiscount == null)
-            this.totalPriceAfterDiscount = 0.0;
+        if (this.subtotal == null)
+            this.subtotal = 0.0;
 
         if (this.shippingPrice == null)
             this.shippingPrice = 0.0;
+
+        if (this.discount == null)
+            this.discount = 0.0;
     }
 
     @ManyToOne
@@ -51,16 +57,16 @@ public class Order extends BaseEntity {
     private OrderState state;
 
     @OneToMany(mappedBy = "order")
-    private java.util.Collection<OrderItem> orderItems;
+    private java.util.List<OrderItem> orderItems;
 
-    @Column(name = "total_price")
-    private Double totalPrice;
+    @Column(name = "subtotal")
+    private Double subtotal;
 
     @Column(name = "discount")
     private Double discount;
 
-    @Column(name = "total_price_after_discount")
-    private Double totalPriceAfterDiscount;
+    @Column(name = "total_price")
+    private Double totalPrice;
 
     @Column(name = "shipping_price")
     private Double shippingPrice;
