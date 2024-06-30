@@ -4,5 +4,5 @@ import com.huuloc.bookstore.bbook.entity.Order;
 
 public interface OrderService {
 
-    Order getPendingOrder();
+    Order getNewOrder();
 }

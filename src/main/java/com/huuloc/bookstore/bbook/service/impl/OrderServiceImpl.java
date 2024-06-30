@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import static com.huuloc.bookstore.bbook.util.AuthUtils.getEmailFromAuthentication;
+
 @Service
 @Slf4j
 public class OrderServiceImpl implements OrderService {
@@ -25,13 +27,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Order getPendingOrder() {
-        String email = getEmailFromAuthentication();
+    public Order getNewOrder() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = getEmailFromAuthentication(authentication);
         if (email == null) {
             return null;
         }
 
-        Order order = orderRepository.findByUserEmailAndState(email, OrderState.PENDING);
+        Order order = orderRepository.findByUserEmailAndState(email, OrderState.NEW);
         if (order == null) {
             com.huuloc.bookstore.bbook.entity.User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> BadRequestException.message("User not found"));
@@ -41,19 +44,5 @@ public class OrderServiceImpl implements OrderService {
             order = orderRepository.save(order);
         }
         return order;
-    }
-
-    private String getEmailFromAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            return null;
-        }
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof User) {
-            return ((User) principal).getUsername();
-        } else if (principal instanceof CustomOAuth2User) {
-            return ((CustomOAuth2User) principal).getEmail();
-        }
-        return null;
     }
 }

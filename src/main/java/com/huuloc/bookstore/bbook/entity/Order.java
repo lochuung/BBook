@@ -23,7 +23,7 @@ public class Order extends BaseEntity {
             this.orderItems = new java.util.ArrayList<>();
 
         if (this.state == null)
-            this.state = OrderState.PENDING;
+            this.state = OrderState.NEW;
 
         if (this.paymentType == null)
             this.paymentType = PaymentType.COD;
@@ -39,6 +39,9 @@ public class Order extends BaseEntity {
 
         if (this.discount == null)
             this.discount = 0.0;
+
+        if (this.quantity == null)
+            this.quantity = 0L;
     }
 
     @ManyToOne
@@ -56,8 +59,17 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderState state;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order",
+            fetch = FetchType.EAGER,
+            cascade = {
+                    CascadeType.REMOVE,
+                    CascadeType.DETACH
+            })
     private java.util.List<OrderItem> orderItems;
+
+    private Long quantity;
+
+    private String note;
 
     @Column(name = "subtotal")
     private Double subtotal;

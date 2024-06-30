@@ -21,9 +21,11 @@
                     </div>
                 </div>
                 <div class="d-flex">
-                    <button
-                        class="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8"><span
-                        class="fas fa-shopping-cart me-2"></span>Mua ngay</button>
+                    <button id="add-to-cart" th:attr="data-product-id=${book.id}"
+                            class="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8"><span
+                            class="fas fa-shopping-cart me-2"></span>Mua ngay
+                    </button>
+                    <input type="hidden" id="orderId" data-th-attr="value=${newOrder?.id}">
                 </div>
             </div>
             <div class="col-12 col-lg-6">
@@ -42,7 +44,8 @@
                             <h1 class="me-3">[[${#numbers.formatDecimal(book.price, 0, 'POINT', 0,
                                 'COMMA')}]] ₫</h1>
                         </div>
-                        <p class="text-success fw-semibold fs-7 mb-2" th:inline="text"><b>Còn lại: </b>[[${book.availableQuantity}]] cuốn</p>
+                        <p class="text-success fw-semibold fs-7 mb-2" th:inline="text"><b>Còn lại: </b>[[${book.availableQuantity}]]
+                            cuốn</p>
                         <p class="mb-2 text-body-secondary" th:text="${book.shortDescription}">
                         </p>
                         <p class="text-danger-dark fw-bold mb-5 mb-lg-0" th:inline="text">
@@ -65,18 +68,22 @@
                                     <div class="d-flex flex-between-center" data-quantity="data-quantity">
                                         <button class="btn btn-phoenix-primary px-3" data-type="minus"><span
                                                 class="fas fa-minus"></span></button>
-                                        <input
-                                                name="quantity"
-                                                required="true"
-                                            class="form-control text-center input-spin-none bg-transparent border-0 outline-none"
-                                            style="width:50px;" type="number" min="1" value="1"
-                                            data-th-attr="max=${book.availableQuantity}"
-                                        />
+                                        <label>
+                                            <input
+                                                    id="quantity"
+                                                    name="quantity"
+                                                    required="required"
+                                                    class="form-control text-center input-spin-none bg-transparent border-0 outline-none"
+                                                    style="width:50px;" type="number" min="1" value="1"
+                                                    data-th-attr="max=${book.availableQuantity}"
+                                            />
+                                        </label>
                                         <button
-                                            class="btn btn-phoenix-primary px-3" data-type="plus"><span
-                                            class="fas fa-plus"></span></button>
-                                    </div><button class="btn btn-phoenix-primary px-3 border-0"><span
-                                        class="fas fa-share-alt fs-7"></span></button>
+                                                class="btn btn-phoenix-primary px-3" data-type="plus"><span
+                                                class="fas fa-plus"></span></button>
+                                    </div>
+                                    <button class="btn btn-phoenix-primary px-3 border-0"><span
+                                            class="fas fa-share-alt fs-7"></span></button>
                                 </div>
                             </div>
                         </div>
@@ -87,17 +94,52 @@
     </div><!-- end of .container-->
 </section>
 <script>
-    document.querySelector('input').addEventListener('change', e=>{
-        const el = e.target || e
+    document.addEventListener('DOMContentLoaded', function () {
+        const quantity = document.querySelector('#quantity');
 
-        if(el.type == "number" && el.max && el.min ){
-            let value = parseInt(el.value)
-            el.value = value // for 000 like input cleanup to 0
-            let max = parseInt(el.max)
-            let min = parseInt(el.min)
-            if ( value > max ) el.value = el.max
-            if ( value < min ) el.value = el.min
-        }
+        quantity.addEventListener('change', function () {
+            if (parseInt(quantity.value) > parseInt(quantity.getAttribute('max'))) {
+                quantity.value = quantity.getAttribute('max');
+            } else if (parseInt(quantity.value) < 1) {
+                quantity.value = 1;
+            }
+        });
+
+        const addToCart = document.querySelector('#add-to-cart');
+        addToCart.addEventListener('click', function () {
+            const productId = addToCart.getAttribute('data-product-id');
+            const quantity = document.querySelector('#quantity').value;
+            const orderId = document.querySelector('#orderId').value;
+            // validate value
+            if (orderId === '') {
+                alert('Vui lòng đăng nhập để thêm vào giỏ hàng');
+                return;
+            }
+
+            const url = '/cart/add';
+            const data = {
+                bookId: productId,
+                quantity: quantity,
+                orderId: orderId
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                // get error message from body
+                return response.json().then(errorInfo => Promise.reject(errorInfo));
+            }).then(data => {
+                location.href = '/cart';
+            }).catch(error => {
+                alert(error.detail)
+            });
+        });
     });
 </script>
 </html>

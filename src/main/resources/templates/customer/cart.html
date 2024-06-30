@@ -9,14 +9,14 @@
             <div class="row g-5">
                 <div class="col-12 col-lg-8">
                     <div id="cartTable"
-                         data-list='{"valueNames":["products","color","size","price","quantity","total"],"page":10}'>
+                         data-list='{"valueNames":["products","price","quantity","total"],"page":10}'>
                         <div class="table-responsive scrollbar mx-n1 px-1">
                             <table class="table fs-9 mb-0 border-top border-translucent text-center">
                                 <thead>
                                 <tr>
                                     <th class="sort white-space-nowrap align-middle fs-10" scope="col"></th>
                                     <th class="sort white-space-nowrap align-middle" scope="col"
-                                        style="min-width:250px;">TIÊU ĐÊ
+                                        style="min-width:250px;">TIÊU ĐỀ
                                     </th>
                                     <th class="sort align-middle text-end" scope="col" style="width:300px;">GIÁ</th>
                                     <th class="sort align-middle ps-5" scope="col" style="width:200px;">SỐ LƯỢNG</th>
@@ -26,14 +26,14 @@
                                 </tr>
                                 </thead>
                                 <tbody class="list" id="cart-table-body">
-                                <!--/*@thymesVar id="pendingOrder" type="com.huuloc.bookstore.bbook.entity.Order"*/-->
+                                <!--/*@thymesVar id="newOrder" type="com.huuloc.bookstore.bbook.entity.Order"*/-->
                                 <tr class="cart-table-row btn-reveal-trigger"
-                                    th:if="${#lists.size(pendingOrder.orderItems) == 0}">
+                                    th:if="${newOrder.quantity == 0}">
                                     <td class="text-body-emphasis fw-semibold ps-0 fs-8" colspan="6">Giỏ hàng trống</td>
                                     <td></td>
                                 </tr>
                                 <tr class="cart-table-row btn-reveal-trigger"
-                                    th:each="orderItem : ${pendingOrder.orderItems}">
+                                    th:each="orderItem : ${newOrder.orderItems}">
                                     <td class="align-middle white-space-nowrap py-0"><a
                                             class="d-block border border-translucent rounded-2"
                                             th:href="${'/book/' + orderItem.book.slug}">
@@ -46,14 +46,16 @@
                                            th:text="${orderItem.book.title}"></a></td>
                                     <td class="price align-middle text-body fs-9 fw-semibold text-end" th:inline="text">
                                         [[${#numbers.formatDecimal(orderItem.price, 0, 'POINT', 0,
-                                        'COMMA')}]] ₫
+                                        'COMMA')}]]₫
                                     </td>
                                     <td class="quantity align-middle fs-8 ps-5">
                                         <div class="input-group input-group-sm flex-nowrap"
                                              data-quantity="data-quantity">
                                             <button class="btn btn-sm px-2" data-type="minus">-</button>
                                             <input class="form-control text-center input-spin-none bg-transparent border-0 px-0"
-                                                   type="number" min="1" data-th-attr="value=${orderItem.quantity}"
+                                                   type="number" min="1"
+                                                   style="width: 30px"
+                                                   data-th-attr="value=${orderItem.quantity}"
                                                    aria-label="Amount (to the nearest dollar)"/>
                                             <button class="btn btn-sm px-2" data-type="plus">+</button>
                                         </div>
@@ -61,18 +63,23 @@
                                     <td class="total align-middle fw-bold text-body-highlight text-end"
                                         th:inline="text">
                                         [[${#numbers.formatDecimal(orderItem.totalPrice, 0, 'POINT', 0,
-                                        'COMMA')}]] ₫
+                                        'COMMA')}]]₫
                                     </td>
                                     <td class="align-middle white-space-nowrap text-end pe-0 ps-3">
-                                        <button class="btn btn-sm text-body-tertiary text-opacity-85 text-body-tertiary-hover me-2">
-                                            <span class="fas fa-trash"></span>
-                                        </button>
+                                        <form th:action="@{/cart/remove/{id}(id=${orderItem.id})}" method="post">
+                                            <button type="submit"
+                                                    class="btn btn-sm text-body-tertiary text-opacity-85 text-body-tertiary-hover me-2">
+                                                <span class="fas fa-trash"></span>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 <tr class="cart-table-row btn-reveal-trigger"
-                                    th:if="${#lists.size(pendingOrder.orderItems) > 0}">
-                                    <td class="text-body-emphasis fw-semibold ps-0 fs-8" colspan="6">Tổng phụ :</td>
-                                    <td class="text-body-emphasis fw-bold text-end fs-8">$691</td>
+                                    th:if="${newOrder.quantity > 0}">
+                                    <td class="text-body-emphasis fw-semibold ps-0 fs-8" colspan="5">Tổng phụ :</td>
+                                    <td class="text-body-emphasis fw-bold text-end fs-8" th:inline="text">
+                                        [[${#numbers.formatDecimal(newOrder.subtotal, 0, 'POINT', 0, 'COMMA')}]]₫
+                                    </td>
                                     <td></td>
                                 </tr>
                                 </tbody>
@@ -94,19 +101,19 @@
                                 <div class="d-flex justify-content-between">
                                     <p class="text-body fw-semibold">Tổng phụ :</p>
                                     <p class="text-body-emphasis fw-semibold" th:inline="text">
-                                        [[${#numbers.formatDecimal(pendingOrder.subtotal, 0, 'POINT', 0,
+                                        [[${#numbers.formatDecimal(newOrder.subtotal, 0, 'POINT', 0,
                                         'COMMA')}]] ₫</p>
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <p class="text-body fw-semibold">Giảm giá :</p>
                                     <p class="text-danger fw-semibold" th:inline="text">
-                                        -[[${#numbers.formatDecimal(pendingOrder.discount, 0, 'POINT', 0,
+                                        -[[${#numbers.formatDecimal(newOrder.discount, 0, 'POINT', 0,
                                         'COMMA')}]] ₫</p>
                                 </div>
                                 <div class="d-flex justify-content-between">
                                     <p class="text-body fw-semibold">Tiền ship :</p>
                                     <p class="text-body-emphasis fw-semibold" th:inline="text">
-                                        [[${#numbers.formatDecimal(pendingOrder.shippingPrice, 0, 'POINT', 0,
+                                        [[${#numbers.formatDecimal(newOrder.shippingPrice, 0, 'POINT', 0,
                                         'COMMA')}]] ₫
                                     </p>
                                 </div>
@@ -118,7 +125,7 @@
                             <div class="d-flex justify-content-between border-y border-dashed py-3 mb-4">
                                 <h4 class="mb-0">Tổng cộng :</h4>
                                 <h4 class="mb-" th:inline="text">
-                                    [[${#numbers.formatDecimal(pendingOrder.totalPrice, 0, 'POINT', 0,
+                                    [[${#numbers.formatDecimal(newOrder.totalPrice, 0, 'POINT', 0,
                                     'COMMA')}]] ₫</h4>
                             </div>
                             <button class="btn btn-primary w-100">Tiến hành đặt hàng<span
