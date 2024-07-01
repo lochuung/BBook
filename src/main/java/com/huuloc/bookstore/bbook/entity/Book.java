@@ -1,6 +1,7 @@
 package com.huuloc.bookstore.bbook.entity;
 
 import com.huuloc.bookstore.bbook.entity.common.BaseEntity;
+import com.huuloc.bookstore.bbook.entity.enums.OrderState;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -32,6 +33,16 @@ public class Book extends BaseEntity {
         }
         if (this.totalSold == null) {
             this.totalSold = 0L;
+        }
+
+        if (this.orderItems != null) {
+            this.totalSold = this.orderItems.stream().mapToLong(OrderItem::getQuantity).sum();
+            this.orderItems.stream()
+                    .filter(orderItem -> orderItem.getOrder().getState() == OrderState.NEW)
+                    .forEach(orderItem -> {
+                        orderItem.setPrice(this.price);
+                        orderItem.setTotalPrice(orderItem.getQuantity() * this.price);
+                    });
         }
     }
 
@@ -69,14 +80,11 @@ public class Book extends BaseEntity {
     @ColumnDefault("false")
     private boolean deleted;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Image> images;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "book_genre",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id"))
+    @JoinTable(name = "book_genre", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -84,16 +92,12 @@ public class Book extends BaseEntity {
     private Publisher publisher;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "book_author",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "author_id"))
+    @JoinTable(name = "book_author", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "author_id"))
     private java.util.List<Author> authors;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Review> reviews;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
 }

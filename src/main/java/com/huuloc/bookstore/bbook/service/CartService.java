@@ -1,9 +1,12 @@
 package com.huuloc.bookstore.bbook.service;
 
 import com.huuloc.bookstore.bbook.dto.cart.AddCartRequest;
+import com.huuloc.bookstore.bbook.entity.Order;
 
-public interface OrderItemService {
+public interface CartService {
     void addToCart(AddCartRequest addCartRequest);
 
-    void removeOrderItem(Long id);
+    void removeCartItem(Long id);
+
+    void checkout(Order order);
 }

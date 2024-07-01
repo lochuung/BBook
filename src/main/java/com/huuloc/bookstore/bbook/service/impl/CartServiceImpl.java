@@ -9,7 +9,7 @@ import com.huuloc.bookstore.bbook.exception.BadRequestException;
 import com.huuloc.bookstore.bbook.repository.BookRepository;
 import com.huuloc.bookstore.bbook.repository.OrderItemRepository;
 import com.huuloc.bookstore.bbook.repository.OrderRepository;
-import com.huuloc.bookstore.bbook.service.OrderItemService;
+import com.huuloc.bookstore.bbook.service.CartService;
 import com.huuloc.bookstore.bbook.util.AuthUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class OrderItemServiceImpl implements OrderItemService {
+public class CartServiceImpl implements CartService {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
@@ -42,13 +42,18 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     @Override
     @Transactional
-    public void removeOrderItem(Long id) {
+    public void removeCartItem(Long id) {
         OrderItem orderItem = orderItemRepository.findById(id)
                 .orElseThrow(() -> BadRequestException.message("Không tìm thấy sách trong giỏ hàng"));
         Order order = orderItem.getOrder();
         checkOrderState(order);
 
         orderItemRepository.delete(orderItem);
+    }
+
+    @Override
+    public void checkout(Order order) {
+
     }
 
     private Order getOrder(Long orderId) {

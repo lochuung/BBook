@@ -1,15 +1,20 @@
 package com.huuloc.bookstore.bbook.service.impl;
 
+import com.huuloc.bookstore.bbook.entity.Address;
 import com.huuloc.bookstore.bbook.entity.Privilege;
 import com.huuloc.bookstore.bbook.entity.Role;
 import com.huuloc.bookstore.bbook.entity.User;
 import com.huuloc.bookstore.bbook.entity.enums.Provider;
+import com.huuloc.bookstore.bbook.repository.AddressRepository;
 import com.huuloc.bookstore.bbook.repository.PrivilegeRepository;
 import com.huuloc.bookstore.bbook.repository.RoleRepository;
 import com.huuloc.bookstore.bbook.repository.UserRepository;
 import com.huuloc.bookstore.bbook.service.auth.CustomOAuth2User;
 import com.huuloc.bookstore.bbook.service.auth.UserService;
+import com.huuloc.bookstore.bbook.util.AuthUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +30,8 @@ public class UserServiceImpl implements UserService {
     private PrivilegeRepository privilegeRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private AddressRepository addressRepository;
 
     @Override
     public void createTestingData() {
@@ -64,5 +71,31 @@ public class UserServiceImpl implements UserService {
                     .build();
             userRepository.save(newUser);
         }
+    }
+
+    @Override
+    public Address getDefaultAddress() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = AuthUtils.getEmailFromAuthentication(authentication);
+        Optional<User> user = userRepository.findByEmail(email);
+        return user.stream()
+                .flatMap(u -> u.getAddresses().stream())
+                .filter(Address::getIsDefault)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public void saveAddress(Address address) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = AuthUtils.getEmailFromAuthentication(authentication);
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isEmpty()) {
+            return;
+        }
+        User u = user.get();
+        address.setUser(u);
+        address.setIsDefault(true);
+        addressRepository.save(address);
     }
 }

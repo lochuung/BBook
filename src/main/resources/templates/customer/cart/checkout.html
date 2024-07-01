@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="content">
+    <section class="pt-5 pb-9">
+        <div class="container-small">
+            <h2 class="mb-5">Thanh toán</h2>
+            <div class="row justify-content-between">
+                <div class="col-lg-7 col-xl-7">
+                    <form>
+                        <div class="d-flex align-items-end">
+                            <h3 class="mb-0 me-3">Thông tin giao hàng</h3>
+                            <a th:href="@{/cart/address}" class="btn btn-link p-0"
+                               type="button">Sửa
+                            </a>
+                        </div>
+                        <table class="table table-borderless mt-4">
+                            <tbody>
+                            <tr>
+                                <td class="py-2 ps-0">
+                                    <div class="d-flex"><span class="fs-3 me-2" data-feather="user"
+                                                              style="height:16px; width:16px;">
+                        </span>
+                                        <h5 class="lh-sm me-4">Tên</h5>
+                                    </div>
+                                </td>
+                                <td class="py-2 fw-bold lh-sm">:</td>
+                                <td class="py-2 px-3">
+                                    <h5 class="lh-sm fw-normal text-body-secondary"
+                                        th:text="${address.fullName}"></h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 ps-0">
+                                    <div class="d-flex"><span class="fs-3 me-2" data-feather="home"
+                                                              style="height:16px; width:16px;">
+                        </span>
+                                        <h5 class="lh-sm me-4">Địa chỉ</h5>
+                                    </div>
+                                </td>
+                                <td class="py-2 fw-bold lh-sm">:</td>
+                                <td class="py-2 px-3">
+                                    <h5 class="lh-lg fw-normal text-body-secondary" th:inline="text">
+                                        [[${address.addressLine}]], [[${address.ward}]], <br>
+                                        [[${address.district}]], [[${address.province}]]
+                                    </h5>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 ps-0">
+                                    <div class="d-flex"><span class="fs-3 me-2" data-feather="phone"
+                                                              style="height:16px; width:16px;">
+                        </span>
+                                        <h5 class="lh-sm me-4">Điện thoại</h5>
+                                    </div>
+                                </td>
+                                <td class="py-2 fw-bold lh-sm">:</td>
+                                <td class="py-2 px-3">
+                                    <h5 class="lh-sm fw-normal text-body-secondary"
+                                        th:text="${address.phoneNumber}">
+                                    </h5>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <hr class="my-6">
+                        <hr class="my-6">
+                        <h3 class="mb-5">Loại giao hàng</h3>
+                        <div class="row gy-6">
+                            <div class="col-12 col-md-6">
+                                <div class="d-flex flex-wrap align-items-center mb-3">
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input" type="radio" name="shippingRadio"
+                                               id="free_shipping" checked/>
+                                        <label class="form-check-label fs-8 text-body" for="free_shipping">Miễn phí vận
+                                            chuyển</label>
+                                    </div>
+                                    <span class="d-inline-block text-body-emphasis fw-bold ms-2">0₫</span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="my-6">
+                        <h3 class="mb-5">Phương thức thanh toán</h3>
+                        <div class="row g-4 mb-7">
+                            <div class="col-12">
+                                <div class="row gx-lg-11">
+                                    <div class="col-12 col-md-auto">
+                                        <div class="form-check">
+                                            <input class="form-check-input" id="paypal" type="radio" checked
+                                                   name="paymentMethod"
+                                                   value="ONLINE"/><label class="form-check-label fs-8 text-body"
+                                                                          for="paypal">Chuyển
+                                            khoản
+                                        </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-auto">
+                                        <div class="form-check">
+                                            <input class="form-check-input" id="coupon" type="radio"
+                                                   name="paymentMethod"
+                                                   value="COD"/><label class="form-check-label fs-8 text-body"
+                                                                       for="coupon">Thanh toán khi nhận
+                                            hàng
+                                        </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-5 mb-lg-0">
+                            <div class="col-md-8 col-lg-9 d-grid">
+                                <button class="btn btn-primary" type="submit" th:inline="text">
+                                    Thanh toán [[${#numbers.formatDecimal(newOrder.totalPrice, 0, 'POINT', 0,
+                                    'COMMA')}]]₫</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-5 col-xl-4">
+                    <div class="card mt-3 mt-lg-0">
+                        <!--/*@thymesVar id="newOrder" type="com.huuloc.bookstore.bbook.entity.Order"*/-->
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h3 class="mb-0">Tổng kết</h3>
+                                <button class="btn btn-link pe-0" type="button">Thay đổi giỏ
+                                    hàng
+                                </button>
+                            </div>
+                            <div class="border-dashed border-bottom border-translucent mt-4">
+                                <div class="ms-n2">
+                                    <div class="row align-items-center mb-2 g-3"
+                                         th:each="item : ${newOrder.orderItems}">
+                                        <div class="col-8 col-md-7 col-lg-8">
+                                            <div class="d-flex align-items-center">
+                                                <img class="me-2 ms-1"
+                                                     th:src="${item.book.thumbnailUrl}"
+                                                     width="40" alt=""/>
+                                                <h6 class="fw-semibold text-body-highlight lh-base"
+                                                    th:text="${item.book.title}">
+                                                </h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-2 col-md-3 col-lg-2">
+                                            <h6 class="fs-10 mb-0" th:inline="text">
+                                                x[[${item.quantity}]]</h6>
+                                        </div>
+                                        <div class="col-2 ps-0">
+                                            <b class="mb-0 fw-semibold text-end fs-10">
+                                                [[${#numbers.formatDecimal(item.price, 0, 'POINT', 0,
+                                                'COMMA')}]]₫
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-dashed border-bottom border-translucent mt-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <h5 class="text-body fw-semibold">Tổng phụ: </h5>
+                                    <h5 class="text-body fw-semibold"
+                                        th:inline="text">
+                                        [[${#numbers.formatDecimal(newOrder.subtotal, 0, 'POINT', 0,
+                                        'COMMA')}]] ₫
+                                    </h5>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <h5 class="text-body fw-semibold">Giảm giá: </h5>
+                                    <h5 class="text-danger fw-semibold" th:inline="text">
+                                        -[[${#numbers.formatDecimal(newOrder.discount, 0, 'POINT', 0,
+                                        'COMMA')}]] ₫</h5>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5 class="text-body fw-semibold">Tiền ship </h5>
+                                    <h5 class="text-body fw-semibold"
+                                        th:inline="text">
+                                        [[${#numbers.formatDecimal(newOrder.shippingPrice, 0, 'POINT', 0,
+                                        'COMMA')}]] ₫</h5>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between border-dashed-y pt-3">
+                                <h4 class="mb-0">Tổng cộng :</h4>
+                                <h4 class="mb-0" th:inline="text">
+                                    [[${#numbers.formatDecimal(newOrder.totalPrice, 0, 'POINT', 0,
+                                    'COMMA')}]]₫</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- end of .container-->
+    </section>
+</th:block>
+</html>

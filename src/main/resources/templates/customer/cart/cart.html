@@ -93,10 +93,6 @@
                             <div class="d-flex flex-between-center mb-3">
                                 <h3 class="card-title mb-0">Tổng kết</h3>
                             </div>
-                            <select class="form-select mb-3" aria-label="delivery type">
-                                <option value="COD">Thanh toán khi nhận hàng</option>
-                                <option value="ONLINE">Thanh toán online</option>
-                            </select>
                             <div>
                                 <div class="d-flex justify-content-between">
                                     <p class="text-body fw-semibold">Tổng phụ :</p>
@@ -128,8 +124,8 @@
                                     [[${#numbers.formatDecimal(newOrder.totalPrice, 0, 'POINT', 0,
                                     'COMMA')}]] ₫</h4>
                             </div>
-                            <button class="btn btn-primary w-100">Tiến hành đặt hàng<span
-                                    class="fas fa-chevron-right ms-1 fs-10"></span></button>
+                            <a class="btn btn-primary w-100" th:href="@{/cart/checkout}">Tiến hành đặt hàng<span
+                                    class="fas fa-chevron-right ms-1 fs-10"></span></a>
                         </div>
                     </div>
                 </div>
