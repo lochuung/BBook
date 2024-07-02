@@ -45,4 +45,10 @@ public class OrderServiceImpl implements OrderService {
         }
         return order;
     }
+
+    @Override
+    public Order findById(Long id) {
+
+        return null;
+    }
 }

@@ -5,13 +5,14 @@ import com.huuloc.bookstore.bbook.entity.Address;
 import com.huuloc.bookstore.bbook.entity.Order;
 import com.huuloc.bookstore.bbook.entity.enums.PaymentType;
 import com.huuloc.bookstore.bbook.service.CartService;
+import com.huuloc.bookstore.bbook.service.OrderService;
 import com.huuloc.bookstore.bbook.service.auth.UserService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,11 +22,14 @@ import java.util.Collections;
 
 @Controller
 @RequestMapping("/cart")
+@Slf4j
 public class CartController implements WebMvcConfigurer {
     @Autowired
     private CartService cartService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping
     public String showCart() {
@@ -70,7 +74,12 @@ public class CartController implements WebMvcConfigurer {
     }
 
     @GetMapping("/checkout")
-    public String showPayment(Model model) {
+    public String showPayment(Model model,
+                              @ModelAttribute("newOrder") Order newOrder) {
+        if (newOrder.getOrderItems() == null || newOrder.getOrderItems().isEmpty()) {
+            return "redirect:/cart";
+        }
+
         Address address = userService.getDefaultAddress();
         if (address == null) {
             return "redirect:/cart/address";
@@ -80,13 +89,11 @@ public class CartController implements WebMvcConfigurer {
     }
 
     @PostMapping("/checkout")
-    public String checkout(@ModelAttribute Address address,
-                           @ModelAttribute("newOrder") Order order,
-                           @RequestParam("paymentMethod") PaymentType paymentType) {
-        order.setAddress(address);
-        order.setPaymentType(paymentType);
-        System.out.println(paymentType);
-        cartService.checkout(order);
-        return "redirect:/cart/checkout";
+    public String checkout(@RequestParam("paymentMethod") PaymentType paymentType) {
+        Order order = cartService.checkout(paymentType);
+        if (paymentType == PaymentType.ONLINE) {
+            return "redirect:/payment/order/" + order.getId();
+        }
+        return "redirect:/order/" + order.getId();
     }
 }

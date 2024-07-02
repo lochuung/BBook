@@ -5,4 +5,6 @@ import com.huuloc.bookstore.bbook.entity.Order;
 public interface OrderService {
 
     Order getNewOrder();
+
+    Order findById(Long id);
 }

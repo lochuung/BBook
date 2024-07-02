@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,6 +48,6 @@ public class Address extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(mappedBy = "address")
-    private Order order;
+    @OneToMany(mappedBy = "addresses")
+    private List<Order> order;
 }

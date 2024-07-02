@@ -49,6 +49,8 @@ public class Book extends BaseEntity {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id;
+    @Version
+    private Long version;
 
     private String title;
     @Column(columnDefinition = "TEXT")

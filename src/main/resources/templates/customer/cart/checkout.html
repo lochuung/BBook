@@ -8,7 +8,7 @@
             <h2 class="mb-5">Thanh toán</h2>
             <div class="row justify-content-between">
                 <div class="col-lg-7 col-xl-7">
-                    <form>
+                    <form th:action="@{/cart/checkout}" method="POST">
                         <div class="d-flex align-items-end">
                             <h3 class="mb-0 me-3">Thông tin giao hàng</h3>
                             <a th:href="@{/cart/address}" class="btn btn-link p-0"
