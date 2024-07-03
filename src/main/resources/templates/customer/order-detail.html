@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}" lang="vi">
+<th:block layout:fragment="scripts">
+    <script>
+        function cancelOrder(id) {
+            if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) {
+                fetch('/order/' + id + '/cancel', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    }
+                });
+            }
+        }
+    </script>
+</th:block>
+
+<th:block layout:fragment="content">
+    <section class="pt-5 pb-9 bg-body-emphasis dark__bg-gray-1200 border-top"
+             th:if="${order.state != 'NEW'}">
+        <div class="container-small">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <h2 class="mb-0">Đơn hàng</h2>
+                <div>
+                    <button class="btn btn-info" type="button"
+                            th:if="${order.state != order.state.valueOf('CANCELLED')}"
+                            th:text="${order.state.getDisplayValue()}"></button>
+                    <button class="btn btn-danger" type="button"
+                            th:if="${order.state == order.state.valueOf('CANCELLED')}"
+                            th:text="${order.state.getDisplayValue()}"></button>
+                    <button class="btn btn-danger"
+                            th:if="${order.state == order.state.valueOf('PENDING')
+                            && order.paymentType == order.paymentType.valueOf('COD')
+                            || order.state == order.state.valueOf('PAYMENT')}"
+                            th:onclick="'cancelOrder(' + ${order.id} + ')'">Hủy đơn hàng
+                    </button>
+                    <a th:href="@{/payment/order/{id}(id=${order.id})}"
+                       th:if="${order.state.valueOf('PAYMENT') == order.state}"
+                       class="btn btn-phoenix-secondary me-2">
+                        <span class="fa-solid fa-money-bill me-sm-2"></span>
+                        <span class="d-none d-sm-inline-block">Thanh
+                toán</span></a>
+                </div>
+            </div>
+            <div class="bg-body dark__bg-gray-1100 p-4 mb-4 rounded-2">
+                <div class="row g-4">
+                    <div class="col-12 col-lg-6">
+                        <div class="row g-4 g-lg-2">
+                            <div class="col-12 col-sm-6 col-lg-12">
+                                <div class="row align-items-center g-0">
+                                    <div class="col-auto col-lg-6 col-xl-5">
+                                        <h6 class="mb-0 me-3">Đơn hàng số :</h6>
+                                    </div>
+                                    <div class="col-auto col-lg-6 col-xl-7">
+                                        <p class="fs-9 text-body-secondary fw-semibold mb-0"
+                                           th:text="${'#' + order.id}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-12">
+                                <div class="row align-items-center g-0">
+                                    <div class="col-auto col-lg-6 col-xl-5">
+                                        <h6 class="me-3">Ngày đặt hàng :</h6>
+                                    </div>
+                                    <div class="col-auto col-lg-6 col-xl-7">
+                                        <p class="fs-9 text-body-secondary fw-semibold mb-0"
+                                           th:text="${#temporals.format(order.updatedDate, 'dd/MM/yyyy')}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-12">
+                                <div class="row align-items-center g-0">
+                                    <div class="col-auto col-lg-6 col-xl-5">
+                                        <h6 class="me-3">Phương thức thanh toán:</h6>
+                                    </div>
+                                    <div class="col-auto col-lg-6 col-xl-7">
+                                        <p class="fs-9 text-body-secondary fw-semibold mb-0"
+                                           th:text="${order.paymentType.getDisplayValue()}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-12">
+                                <div class="row align-items-center g-0">
+                                    <div class="col-auto col-lg-6 col-xl-5">
+                                        <h6 class="me-3">Trạng thái thanh toán:</h6>
+                                    </div>
+                                    <div class="col-auto col-lg-6 col-xl-7">
+                                        <p class="fs-9 text-body-secondary fw-semibold mb-0"
+                                           th:text="${order.paymentType.isType('COD') && !order.state.isState('DELIVERED')
+                                           || order.state.isState('PAYMENT') || order.state.isState('CANCELLED')
+                                           ? 'Chưa thanh toán' : 'Đã thanh toán'}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-6">
+                        <div class="row g-4">
+                            <div class="col-12 col-lg-6">
+                                <h6 class="mb-2"> Địa chỉ giao hàng :</h6>
+                                <div class="fs-9 text-body-secondary fw-semibold mb-0">
+                                    <p class="mb-2" th:text="${order.address.fullName}"></p>
+                                    <p class="mb-2" th:inline="text">
+                                        [[${order.address.addressLine}]], [[${order.address.ward}]], <br>
+                                        [[${order.address.district}]], [[${order.address.province}]]
+                                    </p>
+                                    <p class="mb-0" th:text="${order.address.phoneNumber}"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-0">
+                <div class="table-responsive scrollbar">
+                    <table class="table fs-9 text-body mb-0">
+                        <thead class="bg-body-secondary">
+                        <tr>
+                            <th scope="col" style="width: 24px;"></th>
+                            <th scope="col" style="min-width: 360px;" colspan="7">Tiêu đề</th>
+                            <th class="text-end" scope="col" style="width: 80px;">Số lượng</th>
+                            <th class="text-end" scope="col" style="width: 100px;">Giá</th>
+                            <th class="text-end" scope="col" style="min-width: 60px;">Tổng</th>
+                            <th scope="col" style="width: 24px;"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${order.orderItems}">
+                            <td class="border-0"></td>
+                            <td class="align-middle" colspan="7">
+                                <a th:href="@{/book/{id}(id=${item.book.slug})}" class="line-clamp-1 mb-0 fw-semibold"
+                                   th:text="${item.book.title}"></a>
+                            </td>
+                            <td class="align-middle text-end text-body-highlight fw-semibold"
+                                th:text="${item.quantity}"></td>
+                            <td class="align-middle text-end fw-semibold" th:inline="text">
+                                [[${#numbers.formatDecimal(item.price, 0, 'POINT', 0,
+                                'COMMA')}]]₫
+                            </td>
+                            <td class="align-middle text-end fw-semibold" th:inline="text">
+                                [[${#numbers.formatDecimal(item.totalPrice, 0, 'POINT', 0,
+                                'COMMA')}]]₫
+                            </td>
+                            <td class="border-0"></td>
+                        </tr>
+                        <tr class="bg-body-secondary">
+                            <td></td>
+                            <td class="align-middle fw-semibold" colspan="9">Tổng phụ</td>
+                            <td class="align-middle text-end fw-bold" th:inline="text">
+                                [[${#numbers.formatDecimal(order.subtotal, 0, 'POINT', 0,
+                                'COMMA')}]]₫
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="border-0"></td>
+                            <td colspan="6"></td>
+                            <td class="align-middle fw-bold ps-15" colspan="2">Tiền ship</td>
+                            <td class="align-middle text-end fw-semibold" colspan="2" th:inline="text">
+                                [[${#numbers.formatDecimal(order.totalPrice, 0, 'POINT', 0,
+                                'COMMA')}]]₫
+                            </td>
+                            <td class="border-0"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="6"></td>
+                            <td class="align-middle fw-bold ps-15" colspan="2">Giảm giá</td>
+                            <td class="align-middle text-end fw-semibold text-danger" colspan="2"
+                                th:inline="text"
+                            >-[[${#numbers.formatDecimal(order.discount, 0, 'POINT', 0,
+                                'COMMA')}]]₫
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr class="bg-body-secondary">
+                            <td class="align-middle ps-4 fw-bold text-body-highlight" colspan="3">Tổng cộng</td>
+                            <td class="align-middle fw-bold text-body-highlight" colspan="7" th:text="${tienChu}">
+                            </td>
+                            <td class="align-middle text-end fw-bold" th:inline="text">
+                                [[${#numbers.formatDecimal(order.totalPrice, 0, 'POINT', 0,
+                                'COMMA')}]]₫
+                            </td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div><!-- end of .container-->
+    </section>
+</th:block>
+</html>

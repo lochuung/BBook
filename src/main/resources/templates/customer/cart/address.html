@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="content">
+    <section class="pt-5 pb-9">
+        <div class="container-small cart">
+            <h2 class="mb-5">Thanh toán</h2>
+            <div class="row">
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                    <form th:action="@{/cart/address}" method="POST" th:object="${address}">
+                        <h3 class="mb-5">Thông tin giao hàng</h3>
+                        <input type="hidden" th:field="*{id}" >
+                        <div class="row g-4">
+                            <div class="col-md-6"><label
+                                    class="form-label fs-8 text-body-highlight ps-0 text-transform-none"
+                                    for="inputName">Họ tên</label>
+                                <input class="form-control"
+                                       th:field="*{fullName}"
+                                       name="fullName"
+                                       id="inputName" type="text"
+                                       placeholder="Họ tên"/>
+                                <div class="invalid-feedback" style="display: block"
+                                     th:if="${#fields.hasErrors('fullName')}" role="alert"
+                                     th:errors="*{fullName}"></div>
+                            </div>
+                            <div class="col-md-6"><label
+                                    class="form-label fs-8 text-body-highlight ps-0 text-transform-none"
+                                    for="inputPhone">Số điện thoại</label>
+                                <input class="form-control" id="inputPhone"
+                                       th:field="*{phoneNumber}"
+                                       name="phoneNumber"
+                                       type="tel"
+                                       placeholder="0123456789"/>
+                                <div class="invalid-feedback" style="display: block"
+                                     th:if="${#fields.hasErrors('phoneNumber')}"
+                                     th:errors="*{phoneNumber}"></div>
+                            </div>
+                            <div class="col-12"><label
+                                    class="form-label fs-8 text-body-highlight ps-0 text-transform-none"
+                                    for="inputAddress1">Địa chỉ</label>
+                                <input class="form-control" id="inputAddress1"
+                                       th:field="*{addressLine}"
+                                       type="text"
+                                       placeholder="Địa chỉ"/>
+
+                                <div class="invalid-feedback" style="display: block"
+                                     th:if="${#fields.hasErrors('addressLine')}"
+                                     th:errors="*{addressLine}"></div>
+                            </div>
+                            <div class="col-md-4"><label
+                                    class="form-label fs-8 text-body-highlight ps-0 text-transform-none"
+                                    for="provinces">Tỉnh/Thành phố</label>
+                                <select class="form-select text-body-emphasis" id="provinces"
+                                        th:field="*{province}"
+                                        name="province">
+                                    <option selected="selected" th:value="*{province}">Lựa chọn tỉnh thành</option>
+                                </select>
+
+                                <div class="invalid-feedback" style="display: block"
+                                     th:if="${#fields.hasErrors('province')}"
+                                     th:errors="*{province}"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fs-8 text-body-highlight ps-0 text-transform-none"
+                                       for="districts">Quận/Huyện</label>
+                                <select class="form-select text-body-emphasis" id="districts"
+                                        th:field="*{district}"
+                                        name="district">
+                                    <option selected="selected" th:value="*{district}">Lựa chọn quận huyện</option>
+                                </select>
+                                <div class="invalid-feedback" style="display: block"
+                                     th:if="${#fields.hasErrors('district')}"
+                                     th:errors="*{district}"></div>
+                            </div>
+                            <div class="col-md-4 mb-3"><label
+                                    class="form-label fs-8 text-body-highlight ps-0 text-transform-none"
+                                    for="wards">Phường/Xã</label>
+                                <select class="form-select text-body-emphasis" id="wards"
+                                        th:field="*{ward}"
+                                        name="ward">
+                                    <option selected="selected" th:value="*{ward}">Lựa chọn phường xã</option>
+                                </select>
+                                <div class="invalid-feedback" style="display: block"
+                                     th:if="${#fields.hasErrors('ward')}"
+                                     th:errors="*{ward}"></div>
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-primary px-8 px-sm-11 me-2" type="submit">Lưu</button>
+
+                                <a th:href="@{/cart}" class="btn btn-phoenix-secondary text-nowrap">Thoát và không lưu
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-5 col-xl-4 offset-xl-1">
+                    <div class="card mt-3 mt-lg-0">
+                        <!--/*@thymesVar id="newOrder" type="com.huuloc.bookstore.bbook.entity.Order"*/-->
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h3 class="mb-0">Tổng kết</h3>
+                                <button class="btn btn-link pe-0" type="button">Thay đổi giỏ
+                                    hàng
+                                </button>
+                            </div>
+                            <div class="border-dashed border-bottom border-translucent mt-4">
+                                <div class="ms-n2">
+                                    <div class="row align-items-center mb-2 g-3"
+                                         th:each="item : ${newOrder.orderItems}">
+                                        <div class="col-8 col-md-7 col-lg-8">
+                                            <div class="d-flex align-items-center">
+                                                <img class="me-2 ms-1"
+                                                     th:src="${item.book.thumbnailUrl}"
+                                                     width="40" alt=""/>
+                                                <h6 class="fw-semibold text-body-highlight lh-base"
+                                                    th:text="${item.book.title}">
+                                                </h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-2 col-md-3 col-lg-2">
+                                            <h6 class="fs-10 mb-0" th:inline="text">
+                                                x[[${item.quantity}]]</h6>
+                                        </div>
+                                        <div class="col-2 ps-0">
+                                            <b class="mb-0 fw-semibold text-end fs-10">
+                                                [[${#numbers.formatDecimal(item.price, 0, 'POINT', 0,
+                                                'COMMA')}]]₫
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-dashed border-bottom border-translucent mt-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <h5 class="text-body fw-semibold">Tổng phụ: </h5>
+                                    <h5 class="text-body fw-semibold"
+                                        th:inline="text">
+                                        [[${#numbers.formatDecimal(newOrder.subtotal, 0, 'POINT', 0,
+                                        'COMMA')}]] ₫
+                                    </h5>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <h5 class="text-body fw-semibold">Giảm giá: </h5>
+                                    <h5 class="text-danger fw-semibold" th:inline="text">
+                                        -[[${#numbers.formatDecimal(newOrder.discount, 0, 'POINT', 0,
+                                        'COMMA')}]] ₫</h5>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5 class="text-body fw-semibold">Tiền ship </h5>
+                                    <h5 class="text-body fw-semibold"
+                                        th:inline="text">
+                                        [[${#numbers.formatDecimal(newOrder.shippingPrice, 0, 'POINT', 0,
+                                        'COMMA')}]] ₫</h5>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between border-dashed-y pt-3">
+                                <h4 class="mb-0">Tổng cộng :</h4>
+                                <h4 class="mb-0" th:inline="text">
+                                    [[${#numbers.formatDecimal(newOrder.totalPrice, 0, 'POINT', 0,
+                                    'COMMA')}]] ₫</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- end of .container-->
+    </section>
+</th:block>
+<th:block layout:fragment="scripts">
+    <script>
+        const url = '/assets/data/provinces.json';
+        const provincesData = [];
+        const getProvinces = fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                provincesData.push(...(data.data));
+            });
+
+        window.onload = async function () {
+            await getProvinces;
+            const preloader = document.querySelector('.page-loading');
+            preloader.classList.remove('active');
+            setTimeout(function () {
+                preloader.remove();
+            }, 1000);
+            const provinces = document.getElementById('provinces');
+            const districts = document.getElementById('districts');
+            const wards = document.getElementById('wards');
+            const currentProvinceVal = provinces.value;
+            const currentDistrictVal = districts.value;
+            const currentWardVal = wards.value;
+            console.log(currentProvinceVal, currentDistrictVal, currentWardVal)
+            renderProvinces();
+            provinces.addEventListener('change', function (e) {
+                const provinceId = e.target.selectedOptions[0].dataset.id;
+                const province = provincesData.find(province => province.id === provinceId);
+                districts.innerHTML = '<option selected="selected" value="">Lựa chọn</option>';
+                wards.innerHTML = '<option selected="selected" value="">Lựa chọn</option>';
+                province.data2.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district.full_name;
+                    option.text = district.full_name;
+                    option.dataset.id = district.id;
+                    districts.appendChild(option);
+                });
+            });
+            districts.addEventListener('change', function (e) {
+                const districtId = e.target.selectedOptions[0].dataset.id;
+                const district = provincesData.flatMap(provice => provice.data2).find(district => district.id == districtId);
+                wards.innerHTML = '<option selected="selected" value="">Lựa chọn</option>';
+                district.data3.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward.full_name;
+                    option.text = ward.full_name;
+                    option.dataset.id = ward.id;
+                    wards.appendChild(option);
+                });
+            });
+
+            function renderOptions(data, element, currentValue) {
+                element.innerHTML = '<option selected="selected" value="">Lựa chọn</option>';
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.full_name;
+                    option.text = item.full_name;
+                    option.dataset.id = item.id;
+                    element.appendChild(option);
+                });
+
+                if (currentValue) {
+                    element.querySelector("[value='" + currentValue + "']").selected = true;
+                }
+            }
+
+            function renderProvinces() {
+                renderOptions(provincesData, provinces, currentProvinceVal);
+
+                const province = provincesData.find(province => province.full_name === currentProvinceVal);
+                if (province) {
+                    renderOptions(province.data2, districts, currentDistrictVal);
+
+                    const district = province.data2
+                        .find(district => district.full_name === currentDistrictVal);
+                    if (district) {
+                        renderOptions(district.data3, wards, currentWardVal);
+                    }
+                }
+            }
+        }
+
+    </script>
+</th:block>
+</html>

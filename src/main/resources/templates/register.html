@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="~{layouts/login-layout}"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block layout:fragment="content">
+
+    <div class="row vh-100 g-0">
+        <div class="col-lg-6 position-relative d-none d-lg-block">
+            <div class="bg-holder" style="background-image:url(/assets/img/bg/32.png);"></div>
+            <!--/.bg-holder-->
+        </div>
+        <div class="col-lg-6">
+            <div class="row flex-center h-100 g-0 px-4 px-sm-0">
+                <div class="col col-sm-6 col-lg-7 col-xl-6">
+                    <a class="d-flex flex-center text-decoration-none mb-4"
+                       href="/">
+                        <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block">
+                            <img src="/assets/logo/bbook.png" alt="phoenix" width="58"/></div>
+                    </a>
+                    <div class="text-center mb-7">
+                        <h3 class="text-body-highlight">Đăng ký</h3>
+                    </div>
+                    <div class="alert alert-outline-danger d-flex text-center align-items-center" role="alert"
+                         th:if="${error != null}">
+                        <span class="fas fa-times-circle text-danger fs-5 me-3"></span>
+                        <p class="mb-0 flex-1" th:text="${error}"></p>
+                    </div>
+                    <a th:href="@{/oauth2/authorization/google}" class="btn btn-phoenix-secondary w-100 mb-3">
+                        <span class="fab fa-google text-danger me-2 fs-9"></span>Đăng ký với Google
+                    </a>
+                    <a th:href="@{/oauth2/authorization/facebook}" class="btn btn-phoenix-secondary w-100"><span
+                            class="fab fa-facebook text-primary me-2 fs-9"></span>Đăng ký với Facebook
+                    </a>
+                    <div class="position-relative mt-4">
+                        <hr class="bg-body-secondary"/>
+                        <div class="divider-content-center">hoặc dùng email</div>
+                    </div>
+                    <form th:action="@{/register}" method="POST" th:object="${registerDto}">
+                        <div class="mb-3 text-start"><label class="form-label" for="name">Họ tên</label>
+                            <input
+                                    class="form-control" id="name" type="text" placeholder="Họ tên"
+                                    th:field="*{fullName}"
+                            />
+                            <div class="invalid-feedback" style="display: block"
+                                 th:if="${#fields.hasErrors('fullName')}" role="alert"
+                                 th:errors="*{fullName}"></div>
+                        </div>
+                        <div class="mb-3 text-start"><label class="form-label" for="email">Địa chỉ Email</label>
+                            <input
+                                    class="form-control" id="email" type="email" placeholder="name@example.com"
+                                    th:field="*{email}"
+                            />
+                            <div class="invalid-feedback" style="display: block"
+                                 th:if="${#fields.hasErrors('email')}" role="alert"
+                                 th:errors="*{email}"></div>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6"><label class="form-label" for="password">Mật khẩu</label>
+                                <div class="position-relative" data-password="data-password">
+                                    <input
+                                            class="form-control form-icon-input pe-6" id="password" type="password"
+                                            placeholder="Mật khẩu" data-password-input="data-password-input"
+                                            th:field="*{password}"
+                                    />
+                                    <button type="button"
+                                            class="btn password-btn px-3 py-0 h-100 position-absolute top-0 end-0 fs-7 text-body-tertiary"
+                                            data-password-toggle="data-password-toggle"><span
+                                            class="uil uil-eye show"></span><span class="uil uil-eye-slash hide"></span>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback" style="display: block"
+                                     th:if="${#fields.hasErrors('password')}" role="alert"
+                                     th:errors="*{password}"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label" for="confirmPassword">Nhập lại mật khẩu</label>
+                                <div class="position-relative" data-password="data-password"
+                                ><input
+                                        class="form-control form-icon-input pe-6" id="confirmPassword" type="password"
+                                        placeholder="Nhập lại mật khẩu" data-password-input="data-password-input"
+                                        th:field="*{confirmPassword}"
+                                />
+                                    <button type="button"
+                                            class="btn password-btn px-3 py-0 h-100 position-absolute top-0 end-0 fs-7 text-body-tertiary"
+                                            data-password-toggle="data-password-toggle">
+                                        <span
+                                                class="uil uil-eye show"></span><span
+                                            class="uil uil-eye-slash hide"></span>
+                                    </button>
+                                </div>
+
+                                <div class="invalid-feedback" style="display: block"
+                                     th:if="${#fields.hasErrors('confirmPassword')}" role="alert"
+                                     th:errors="*{confirmPassword}"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary w-100 mb-3" type="submit">Đăng ký</button>
+                        <div class="text-center"><a class="fs-9 fw-bold"
+                                                    th:href="@{/login}">Đăng nhập tài khỏoản có sẵn</a></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

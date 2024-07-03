@@ -30,7 +30,7 @@
                                                 alt=""/>
                                     </div>
                                     <a class="stretched-link"
-                                       th:href="${'/books/' + book.slug}">
+                                       th:href="${'/book/' + book.slug}">
                                         <h6 class="mb-2 lh-sm line-clamp-3 product-name"
                                             th:text="${book.title}"></h6>
                                     </a>
@@ -45,9 +45,13 @@
                                     </p>
                                 </div>
                                 <div>
-                                    <h3 class="text-body-emphasis" th:inline="text">
-                                        [[${#numbers.formatDecimal(book.price, 0, 'POINT', 0,
-                                        'COMMA')}]] VNĐ</h3>
+                                    <div class="d-flex align-items-center mb-1">
+                                        <p class="me-2 text-body mb-0"
+                                           th:inline="text">
+                                            [[${#numbers.formatDecimal(book.price, 0, 'POINT', 0,
+                                            'COMMA')}]] ₫
+                                        </p>
+                                    </div>
                                     <p class="text-success fw-bold fs-9 lh-1 mb-0"
                                        th:text="${'Đã bán: ' + book.totalSold}"></p>
                                 </div>

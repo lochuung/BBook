@@ -19,8 +19,11 @@ public class Order extends BaseEntity {
 
     @PrePersist
     public void prePersist() {
+        if (this.orderItems == null)
+            this.orderItems = new java.util.ArrayList<>();
+
         if (this.state == null)
-            this.state = OrderState.PENDING;
+            this.state = OrderState.NEW;
 
         if (this.paymentType == null)
             this.paymentType = PaymentType.COD;
@@ -28,18 +31,29 @@ public class Order extends BaseEntity {
         if (this.totalPrice == null)
             this.totalPrice = 0.0;
 
-        if (this.totalPriceAfterDiscount == null)
-            this.totalPriceAfterDiscount = 0.0;
+        if (this.subtotal == null)
+            this.subtotal = 0.0;
 
         if (this.shippingPrice == null)
             this.shippingPrice = 0.0;
+
+        if (this.discount == null)
+            this.discount = 0.0;
+
+        if (this.quantity == null)
+            this.quantity = 0L;
     }
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH
+    })
     @JoinColumn(name = "address_id")
     private Address address;
 
@@ -50,17 +64,26 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderState state;
 
-    @OneToMany(mappedBy = "order")
-    private java.util.Collection<OrderItem> orderItems;
+    @OneToMany(mappedBy = "order",
+            fetch = FetchType.EAGER,
+            cascade = {
+                    CascadeType.REMOVE,
+                    CascadeType.DETACH
+            })
+    private java.util.List<OrderItem> orderItems;
 
-    @Column(name = "total_price")
-    private Double totalPrice;
+    private Long quantity;
+
+    private String note;
+
+    @Column(name = "subtotal")
+    private Double subtotal;
 
     @Column(name = "discount")
     private Double discount;
 
-    @Column(name = "total_price_after_discount")
-    private Double totalPriceAfterDiscount;
+    @Column(name = "total_price")
+    private Double totalPrice;
 
     @Column(name = "shipping_price")
     private Double shippingPrice;

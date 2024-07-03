@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="content">
+    <section class="pt-5 pb-9">
+        <div class="container-small cart">
+            <h2 class="mb-6">Giỏ hàng</h2>
+            <div class="row g-5">
+                <div class="col-12 col-lg-8">
+                    <div id="cartTable"
+                         data-list='{"valueNames":["products","price","quantity","total"],"page":10}'>
+                        <div class="table-responsive scrollbar mx-n1 px-1">
+                            <table class="table fs-9 mb-0 border-top border-translucent text-center">
+                                <thead>
+                                <tr>
+                                    <th class="sort white-space-nowrap align-middle fs-10" scope="col"></th>
+                                    <th class="sort white-space-nowrap align-middle" scope="col"
+                                        style="min-width:250px;">TIÊU ĐỀ
+                                    </th>
+                                    <th class="sort align-middle text-end" scope="col" style="width:300px;">GIÁ</th>
+                                    <th class="sort align-middle ps-5" scope="col" style="width:200px;">SỐ LƯỢNG</th>
+                                    <th class="sort align-middle text-end" scope="col" style="width:250px;">TỔNG CỘNG
+                                    </th>
+                                    <th class="sort text-end align-middle pe-0" scope="col"></th>
+                                </tr>
+                                </thead>
+                                <tbody class="list" id="cart-table-body">
+                                <!--/*@thymesVar id="newOrder" type="com.huuloc.bookstore.bbook.entity.Order"*/-->
+                                <tr class="cart-table-row btn-reveal-trigger"
+                                    th:if="${newOrder.quantity == 0}">
+                                    <td class="text-body-emphasis fw-semibold ps-0 fs-8" colspan="6">Giỏ hàng trống</td>
+                                    <td></td>
+                                </tr>
+                                <tr class="cart-table-row btn-reveal-trigger"
+                                    th:each="orderItem : ${newOrder.orderItems}">
+                                    <td class="align-middle white-space-nowrap py-0"><a
+                                            class="d-block border border-translucent rounded-2"
+                                            th:href="${'/book/' + orderItem.book.slug}">
+                                        <img
+                                                th:src="${orderItem.book.thumbnailUrl}" alt="" width="53"/></a>
+                                    </td>
+                                    <td class="products align-middle">
+                                        <a class="fw-semibold mb-0 line-clamp-2"
+                                           th:href="${'/book/' + orderItem.book.slug}"
+                                           th:text="${orderItem.book.title}"></a></td>
+                                    <td class="price align-middle text-body fs-9 fw-semibold text-end" th:inline="text">
+                                        [[${#numbers.formatDecimal(orderItem.price, 0, 'POINT', 0,
+                                        'COMMA')}]]₫
+                                    </td>
+                                    <td class="quantity align-middle fs-8 ps-5">
+                                        <div class="input-group input-group-sm flex-nowrap"
+                                             data-quantity="data-quantity">
+                                            <button class="btn btn-sm px-2" data-type="minus">-</button>
+                                            <input class="form-control text-center input-spin-none bg-transparent border-0 px-0"
+                                                   type="number" min="1"
+                                                   style="width: 30px"
+                                                   data-th-attr="value=${orderItem.quantity}"
+                                                   aria-label="Amount (to the nearest dollar)"/>
+                                            <button class="btn btn-sm px-2" data-type="plus">+</button>
+                                        </div>
+                                    </td>
+                                    <td class="total align-middle fw-bold text-body-highlight text-end"
+                                        th:inline="text">
+                                        [[${#numbers.formatDecimal(orderItem.totalPrice, 0, 'POINT', 0,
+                                        'COMMA')}]]₫
+                                    </td>
+                                    <td class="align-middle white-space-nowrap text-end pe-0 ps-3">
+                                        <form th:action="@{/cart/remove/{id}(id=${orderItem.id})}" method="post">
+                                            <button type="submit"
+                                                    class="btn btn-sm text-body-tertiary text-opacity-85 text-body-tertiary-hover me-2">
+                                                <span class="fas fa-trash"></span>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr class="cart-table-row btn-reveal-trigger"
+                                    th:if="${newOrder.quantity > 0}">
+                                    <td class="text-body-emphasis fw-semibold ps-0 fs-8" colspan="5">Tổng phụ :</td>
+                                    <td class="text-body-emphasis fw-bold text-end fs-8" th:inline="text">
+                                        [[${#numbers.formatDecimal(newOrder.subtotal, 0, 'POINT', 0, 'COMMA')}]]₫
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-between-center mb-3">
+                                <h3 class="card-title mb-0">Tổng kết</h3>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between">
+                                    <p class="text-body fw-semibold">Tổng phụ :</p>
+                                    <p class="text-body-emphasis fw-semibold" th:inline="text">
+                                        [[${#numbers.formatDecimal(newOrder.subtotal, 0, 'POINT', 0,
+                                        'COMMA')}]] ₫</p>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <p class="text-body fw-semibold">Giảm giá :</p>
+                                    <p class="text-danger fw-semibold" th:inline="text">
+                                        -[[${#numbers.formatDecimal(newOrder.discount, 0, 'POINT', 0,
+                                        'COMMA')}]] ₫</p>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <p class="text-body fw-semibold">Tiền ship :</p>
+                                    <p class="text-body-emphasis fw-semibold" th:inline="text">
+                                        [[${#numbers.formatDecimal(newOrder.shippingPrice, 0, 'POINT', 0,
+                                        'COMMA')}]] ₫
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3"><input class="form-control" type="text"
+                                                                 placeholder="Mã giảm giá"/>
+                                <button class="btn btn-phoenix-primary px-5">Áp dụng</button>
+                            </div>
+                            <div class="d-flex justify-content-between border-y border-dashed py-3 mb-4">
+                                <h4 class="mb-0">Tổng cộng :</h4>
+                                <h4 class="mb-" th:inline="text">
+                                    [[${#numbers.formatDecimal(newOrder.totalPrice, 0, 'POINT', 0,
+                                    'COMMA')}]] ₫</h4>
+                            </div>
+                            <a class="btn btn-primary w-100" th:href="@{/cart/checkout}">Tiến hành đặt hàng<span
+                                    class="fas fa-chevron-right ms-1 fs-10"></span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- end of .container-->
+    </section>
+</th:block>
+</html>

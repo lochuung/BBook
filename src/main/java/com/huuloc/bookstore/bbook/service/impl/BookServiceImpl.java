@@ -5,6 +5,7 @@ import com.huuloc.bookstore.bbook.dto.filter.SearchRequest;
 import com.huuloc.bookstore.bbook.dto.filter.SortRequest;
 import com.huuloc.bookstore.bbook.entity.Book;
 import com.huuloc.bookstore.bbook.enums.sort.filter.SortDirection;
+import com.huuloc.bookstore.bbook.exception.BadRequestException;
 import com.huuloc.bookstore.bbook.repository.BookRepository;
 import com.huuloc.bookstore.bbook.repository.specification.SearchSpecification;
 import com.huuloc.bookstore.bbook.service.BookService;
@@ -51,5 +52,14 @@ public class BookServiceImpl implements BookService {
                 .topNewBooks(topNewBooks)
                 .topSellBooks(topSellBooks)
                 .build();
+    }
+
+    @Override
+    public Book findBySlug(String slug) {
+        Book book = bookRepository.findBySlug(slug);
+        if (book == null) {
+            throw BadRequestException.message("Book not found");
+        }
+        return book;
     }
 }

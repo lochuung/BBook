@@ -1,14 +1,14 @@
 package com.huuloc.bookstore.bbook.controller;
 
+import com.huuloc.bookstore.bbook.config.AppConfig;
 import com.huuloc.bookstore.bbook.entity.Genre;
+import com.huuloc.bookstore.bbook.entity.Order;
 import com.huuloc.bookstore.bbook.service.GenreService;
+import com.huuloc.bookstore.bbook.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.List;
 
@@ -16,12 +16,11 @@ import java.util.List;
 public class GlobalController {
     @Autowired
     private GenreService genreService;
+    @Autowired
+    private OrderService orderService;
 
-    @Value("${server.port:8080}")
-    private String serverPort;
-
-    @Value("${server.baseHostUrl:http://localhost}")
-    private String baseHostUrl;
+    @Autowired
+    private AppConfig appConfig;
 
     // add model attribute for all request
     @ModelAttribute("genres")
@@ -31,7 +30,11 @@ public class GlobalController {
 
     @ModelAttribute("baseUrl")
     public String getBaseUrl() {
-        return baseHostUrl + ":" + serverPort;
+        return appConfig.getBaseUrl();
     }
 
+    @ModelAttribute("newOrder")
+    public Order getNewOrder() {
+        return orderService.getNewOrder();
+    }
 }
