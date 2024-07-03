@@ -36,7 +36,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http, RSAKey rsaKey) throws Exception {
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/anonymous*")
                         .anonymous()
-                        .requestMatchers("/admin**", "/cart/**", "/cart",
+                        .requestMatchers("/admin**","/admin/**", "/cart/**", "/cart",
                                 "/order/**")
                         .authenticated()
                         .anyRequest()

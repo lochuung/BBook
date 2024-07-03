@@ -1,5 +1,6 @@
 package com.huuloc.bookstore.bbook.service.auth;
 
+import com.huuloc.bookstore.bbook.dto.RegisterDto;
 import com.huuloc.bookstore.bbook.entity.Address;
 
 public interface UserService {
@@ -10,4 +11,6 @@ public interface UserService {
     Address getDefaultAddress();
 
     void saveAddress(Address address);
+
+    void register(RegisterDto registerDto);
 }

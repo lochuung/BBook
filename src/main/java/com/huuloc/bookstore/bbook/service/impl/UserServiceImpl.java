@@ -1,5 +1,6 @@
 package com.huuloc.bookstore.bbook.service.impl;
 
+import com.huuloc.bookstore.bbook.dto.RegisterDto;
 import com.huuloc.bookstore.bbook.entity.Address;
 import com.huuloc.bookstore.bbook.entity.Privilege;
 import com.huuloc.bookstore.bbook.entity.Role;
@@ -97,5 +98,28 @@ public class UserServiceImpl implements UserService {
         address.setUser(u);
         address.setIsDefault(true);
         addressRepository.save(address);
+    }
+
+    @Override
+    public void register(RegisterDto registerDto) {
+        String email = registerDto.getEmail();
+        String password = registerDto.getPassword();
+        String fullName = registerDto.getFullName();
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        Role roleUser = roleRepository.findByName("USER").orElseThrow(
+                () -> new RuntimeException("Role not found")
+        );
+        // check email exist
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Email đã tồn tại");
+        }
+        User newUser = User.builder().email(email)
+                .roles(Collections.singletonList(roleUser))
+                .fullName(fullName)
+                .provider(Provider.LOCAL)
+                .enabled(true)
+                .password(passwordEncoder.encode(password))
+                .build();
+        userRepository.save(newUser);
     }
 }
