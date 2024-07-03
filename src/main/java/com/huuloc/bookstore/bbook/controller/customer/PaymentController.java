@@ -48,9 +48,6 @@ public class PaymentController {
     public String success(@RequestParam("id") String id,
                           @RequestParam("cancel") Boolean cancel) throws Exception {
         Long orderId = paymentService.updatePaymentStatus(id);
-        if (cancel) {
-            return "redirect:/order/payment/" + orderId;
-        }
         return "redirect:/order/" + orderId;
     }
 }

@@ -2,18 +2,19 @@ package com.huuloc.bookstore.bbook.service.impl;
 
 import com.huuloc.bookstore.bbook.entity.Order;
 import com.huuloc.bookstore.bbook.entity.enums.OrderState;
+import com.huuloc.bookstore.bbook.entity.enums.PaymentType;
 import com.huuloc.bookstore.bbook.exception.BadRequestException;
 import com.huuloc.bookstore.bbook.repository.OrderRepository;
 import com.huuloc.bookstore.bbook.repository.UserRepository;
 import com.huuloc.bookstore.bbook.service.OrderService;
-import com.huuloc.bookstore.bbook.service.auth.CustomOAuth2User;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.huuloc.bookstore.bbook.util.AuthUtils.getEmailFromAuthentication;
 
@@ -48,7 +49,45 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findById(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = getEmailFromAuthentication(authentication);
+        if (email == null) {
+            return null;
+        }
+        return orderRepository.findById(id).orElse(null);
+    }
 
-        return null;
+    @Override
+    public void cancelOrder(Long orderId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = getEmailFromAuthentication(authentication);
+        if (email == null) {
+            return;
+        }
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (order == null) {
+            return;
+        }
+        if (!order.getUser().getEmail().equals(email)) {
+            return;
+        }
+        if (order.getState() != OrderState.PAYMENT &&
+                (order.getState() != OrderState.PENDING ||
+                        order.getPaymentType() != PaymentType.COD)
+        ) {
+            return;
+        }
+        order.setState(OrderState.CANCELLED);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public List<Order> findAll() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = getEmailFromAuthentication(authentication);
+        if (email == null) {
+            return null;
+        }
+        return orderRepository.findAlByUserEmailAndStateNot(email, OrderState.NEW);
     }
 }

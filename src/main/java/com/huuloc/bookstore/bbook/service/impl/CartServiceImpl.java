@@ -74,7 +74,7 @@ public class CartServiceImpl implements CartService {
         if (address == null) {
             throw BadRequestException.message("Vui lòng cập nhật địa chỉ giao hàng");
         }
-        order.setAddresses(address);
+        order.setAddress(address);
         order.setPaymentType(paymentType);
         for (OrderItem item : order.getOrderItems()) {
             Book book = bookRepository.findByIdWithLock(item.getBook().getId());

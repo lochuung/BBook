@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}" lang="vi">
+<th:block layout:fragment="content">
+    <div class="content">
+        <div class="mb-9">
+            <div class="row g-3 mb-4">
+                <div class="col-auto">
+                    <h2 class="mb-0">Đơn hàng</h2>
+                </div>
+            </div>
+            <div id="orderTable"
+                 data-list='{"valueNames":["order","total","fulfilment_status","delivery_type","date"],"page":10,"pagination":true}'>
+                <div class="mx-auto px-4 px-lg-6 bg-body-emphasis border-top border-bottom border-translucent top-1">
+                    <div class="table-responsive scrollbar mx-n1 px-1">
+                        <table class="table table-sm fs-9 mb-0">
+                            <thead>
+                            <tr>
+                                <th class="sort white-space-nowrap text-center align-middle pe-3" scope="col"
+                                    data-sort="order"
+                                >MÃ ĐƠN HÀNG
+                                </th>
+                                <th class="sort align-middle text-center" scope="col" data-sort="total" style="">TỔNG
+                                </th>
+                                <th class="sort align-middle text-center pe-3 mx-auto" scope="col"
+                                    data-sort="fulfilment_status"
+                                    style="width: 10%">TRẠNG THÁI
+                                </th>
+                                <th class="sort align-middle text-center" scope="col" data-sort="delivery_type" style="">
+                                    PHƯƠNG THỨC THANH TOÁN
+                                </th>
+                                <th class="sort align-middle text-center pe-0" scope="col" data-sort="date">NGÀY</th>
+                            </tr>
+                            </thead>
+                            <tbody class="list" id="order-table-body">
+                            <tr th:each="order : ${orders}"
+                                class="hover-actions-trigger btn-reveal-trigger position-static">
+                                <td class="order align-middle white-space-nowrap py-0 text-center"><a
+                                        class="fw-semibold"
+                                        th:href="@{/order/{id}(id=${order.id})}"
+                                        th:text="${'#' + order.id}"></a>
+                                </td>
+                                <td class="total align-middle  text-center fw-semibold text-body-highlight"
+                                    th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+                                </td>
+                                <td class="fulfilment_status align-middle white-space-nowrap text-center fw-bold text-body-tertiary">
+                                  <span class="badge badge-phoenix fs-10"
+                                        th:classappend="${order.state.isState('PENDING') || order.state.isState('PAYMENT')
+                                    ? 'badge-phoenix-warning' : (order.state.isState('CANCELLED')
+                                    ? 'badge-phoenix-danger' : 'badge-phoenix-success')}">
+                                      <span
+                                              class="badge-label" th:text="${order.state.getDisplayValue()}">
+                                      </span>
+                                      <span class="ms-1"
+                                            th:attrappend="data-feather=${order.state.isState('PENDING') || order.state.isState('PAYMENT')
+                                    ? 'clock' : (order.state.isState('CANCELLED')
+                                    ? 'x' : 'check')}"
+                                            style="height:12.8px;width:12.8px;"></span>
+                                  </span>
+                                </td>
+                                <td class="delivery_type align-middle white-space-nowrap text-body fs-9 text-center"
+                                    th:text="${order.paymentType.getDisplayValue()}">
+                                </td>
+                                <td class="date align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 text-center"
+                                    th:text="${#temporals.format(order.updatedDate, 'dd/MM/yyyy')}">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row align-items-center justify-content-between py-2 pe-0 fs-9">
+                        <div class="col-auto d-flex">
+                            <p class="mb-0 d-none d-sm-block me-3 fw-semibold text-body"
+                               data-list-info="data-list-info"></p><a
+                                class="fw-semibold" href="#!" data-list-view="*">Xem toàn bộ<span
+                                class="fas fa-angle-right ms-1"
+                                data-fa-transform="down-1"></span></a><a class="fw-semibold d-none" href="#!"
+                                                                         data-list-view="less">Thu gọn<span
+                                class="fas fa-angle-right ms-1"
+                                data-fa-transform="down-1"></span></a>
+                        </div>
+                        <div class="col-auto d-flex">
+                            <button class="page-link" data-list-pagination="prev"><span
+                                    class="fas fa-chevron-left"></span></button>
+                            <ul class="mb-0 pagination"></ul>
+                            <button class="page-link pe-0" data-list-pagination="next"><span
+                                    class="fas fa-chevron-right"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

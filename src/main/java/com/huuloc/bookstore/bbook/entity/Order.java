@@ -55,7 +55,7 @@ public class Order extends BaseEntity {
             CascadeType.REFRESH
     })
     @JoinColumn(name = "address_id")
-    private Address addresses;
+    private Address address;
 
     @ManyToOne
     @JoinColumn(name = "coupon_id")

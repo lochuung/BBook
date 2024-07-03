@@ -48,6 +48,6 @@ public class Address extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "addresses")
+    @OneToMany(mappedBy = "address")
     private List<Order> order;
 }
