@@ -134,8 +134,8 @@
                         <tr th:each="item : ${order.orderItems}">
                             <td class="border-0"></td>
                             <td class="align-middle" colspan="7">
-                                <p class="line-clamp-1 mb-0 fw-semibold"
-                                   th:text="${item.book.title}"></p>
+                                <a th:href="@{/book/{id}(id=${item.book.slug})}" class="line-clamp-1 mb-0 fw-semibold"
+                                   th:text="${item.book.title}"></a>
                             </td>
                             <td class="align-middle text-end text-body-highlight fw-semibold"
                                 th:text="${item.quantity}"></td>

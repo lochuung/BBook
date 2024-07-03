@@ -1,9 +1,12 @@
 package com.huuloc.bookstore.bbook.service.impl;
 
+import com.huuloc.bookstore.bbook.entity.Book;
 import com.huuloc.bookstore.bbook.entity.Order;
+import com.huuloc.bookstore.bbook.entity.OrderItem;
 import com.huuloc.bookstore.bbook.entity.enums.OrderState;
 import com.huuloc.bookstore.bbook.entity.enums.PaymentType;
 import com.huuloc.bookstore.bbook.exception.BadRequestException;
+import com.huuloc.bookstore.bbook.repository.BookRepository;
 import com.huuloc.bookstore.bbook.repository.OrderRepository;
 import com.huuloc.bookstore.bbook.repository.UserRepository;
 import com.huuloc.bookstore.bbook.service.OrderService;
@@ -25,6 +28,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BookRepository bookRepository;
 
     @Override
     @Transactional
@@ -58,6 +63,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void cancelOrder(Long orderId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = getEmailFromAuthentication(authentication);
@@ -76,6 +82,13 @@ public class OrderServiceImpl implements OrderService {
                         order.getPaymentType() != PaymentType.COD)
         ) {
             return;
+        }
+        for (OrderItem item : order.getOrderItems()) {
+            Book book = bookRepository.findByIdWithLock(item.getBook().getId());
+            book.setAvailableQuantity(book.getAvailableQuantity() + item.getQuantity());
+            book.setTotalSold(book.getTotalSold() - item.getQuantity());
+            item.setBook(book);
+            bookRepository.save(book);
         }
         order.setState(OrderState.CANCELLED);
         orderRepository.save(order);
