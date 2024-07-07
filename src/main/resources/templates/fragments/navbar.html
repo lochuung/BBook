@@ -102,11 +102,37 @@
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="search-box ecommerce-search-box w-100">
-                            <form class="position-relative"><input
-                                    class="form-control search-input search form-control-sm" type="search"
-                                    placeholder="Tìm kiếm..." aria-label="Tìm kiếm..."/>
+                            <div class="position-relative">
+                                <form action="" id="search-form">
+                                    <input type="hidden" id="action-url"
+                                           th:value="${restoredUrl == null ? '/book/search' : restoredUrl}">
+                                    <input
+                                            class="form-control search-input search form-control-sm"
+                                            type="search"
+                                            name="keyword" id="keyword" th:value="${keyword == null ? '' : keyword}"
+                                            placeholder="Tìm kiếm..." aria-label="Tìm kiếm..."/>
+                                </form>
                                 <span class="fas fa-search search-box-icon"></span>
-                            </form>
+                            </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    document.getElementById('search-form').addEventListener('submit', function (e) {
+                                        e.preventDefault();
+                                        let keyword = document.getElementById('keyword').value;
+                                        let actionUrl = document.getElementById('action-url').value;
+                                        if (actionUrl.includes('keyword=')) {
+                                            // remove old keyword
+                                            actionUrl = actionUrl.replace(/keyword=[^&]*/g, '');
+                                        }
+                                        if (actionUrl.includes('?')) {
+                                            actionUrl = actionUrl + '&keyword=' + keyword;
+                                        } else {
+                                            actionUrl = actionUrl + '?keyword=' + keyword;
+                                        }
+                                        window.location.href = actionUrl;
+                                    });
+                                })
+                            </script>
                         </div>
                     </div>
                 </div>

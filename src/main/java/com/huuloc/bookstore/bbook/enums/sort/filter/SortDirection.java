@@ -17,5 +17,4 @@ public enum SortDirection {
     };
 
     public abstract <T> Order build(Root<T> root, CriteriaBuilder cb, SortRequest request);
-
 }

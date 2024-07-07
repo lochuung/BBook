@@ -10,8 +10,8 @@ import com.huuloc.bookstore.bbook.repository.BookRepository;
 import com.huuloc.bookstore.bbook.repository.specification.SearchSpecification;
 import com.huuloc.bookstore.bbook.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,11 +22,11 @@ public class BookServiceImpl implements BookService {
     private BookRepository bookRepository;
 
     @Override
-    public List<Book> search(SearchRequest searchRequest) {
+    public Page<Book> search(SearchRequest searchRequest) {
         SearchSpecification<Book> searchSpecification = new SearchSpecification<>(searchRequest);
         Pageable pageable = SearchSpecification.getPageable(searchRequest.getPage(),
                 searchRequest.getSize());
-        return bookRepository.findAll(searchSpecification, pageable).getContent();
+        return bookRepository.findAll(searchSpecification, pageable);
     }
 
     @Override
@@ -39,13 +39,13 @@ public class BookServiceImpl implements BookService {
                 .sorts(List.of(sortRequest))
                 .size(limit)
                 .build();
-        List<Book> topRateBooks = search(searchRequest);
+        List<Book> topRateBooks = search(searchRequest).getContent();
 
         sortRequest.setKey("publishedDate");
-        List<Book> topNewBooks = search(searchRequest);
+        List<Book> topNewBooks = search(searchRequest).getContent();
 
         sortRequest.setKey("totalSold");
-        List<Book> topSellBooks = search(searchRequest);
+        List<Book> topSellBooks = search(searchRequest).getContent();
 
         return TopBooksDto.builder()
                 .topRateBooks(topRateBooks)

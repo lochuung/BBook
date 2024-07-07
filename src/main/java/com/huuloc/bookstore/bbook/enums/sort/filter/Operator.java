@@ -107,6 +107,44 @@ public enum Operator {
             log.info("Can not use between for {} field type.", request.getFieldType());
             return predicate;
         }
+    }, GREATER_THAN_OR_EQUAL {
+        @Override
+        public <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
+            Object value = request.getFieldType().parse(request.getValue().toString());
+            if (request.getFieldType() == FieldType.DATE) {
+                LocalDateTime startDate = (LocalDateTime) value;
+                Expression<LocalDateTime> key = root.get(request.getKey());
+                return cb.and(cb.greaterThanOrEqualTo(key, startDate), predicate);
+            }
+
+            if (request.getFieldType() != FieldType.CHAR && request.getFieldType() != FieldType.BOOLEAN) {
+                Number start = (Number) value;
+                Expression<Number> key = root.get(request.getKey());
+                return cb.and(cb.ge(key, start), predicate);
+            }
+
+            log.info("Can not use greater than or equal for {} field type.", request.getFieldType());
+            return predicate;
+        }
+    }, LESS_THAN_OR_EQUAL {
+        @Override
+        public <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
+            Object value = request.getFieldType().parse(request.getValue().toString());
+            if (request.getFieldType() == FieldType.DATE) {
+                LocalDateTime endDate = (LocalDateTime) value;
+                Expression<LocalDateTime> key = root.get(request.getKey());
+                return cb.and(cb.lessThanOrEqualTo(key, endDate), predicate);
+            }
+
+            if (request.getFieldType() != FieldType.CHAR && request.getFieldType() != FieldType.BOOLEAN) {
+                Number end = (Number) value;
+                Expression<Number> key = root.get(request.getKey());
+                return cb.and(cb.le(key, end), predicate);
+            }
+
+            log.info("Can not use less than or equal for {} field type.", request.getFieldType());
+            return predicate;
+        }
     };
 
     public abstract <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate);
