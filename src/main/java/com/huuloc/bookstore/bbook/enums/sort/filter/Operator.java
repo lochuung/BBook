@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -56,21 +57,20 @@ public enum Operator {
 
     LIKE_OR {
         public <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
-            String[] relations = request.getKey().split("\\.");
-            Expression<String> key;
-            if (relations.length <= 1) {
-                key = root.get(request.getKey());
-            } else {
-                key = root.join(relations[0]).get(relations[1]);
-            }
+            List<Predicate> predicates = new ArrayList<>();
 
-            if (request.getValues() != null && !request.getValues().isEmpty()) {
-                for (Object value : request.getValues()) {
-                    predicate = cb.or(predicate, cb.like(cb.upper(key), "%" + value.toString().toUpperCase() + "%"));
-                }
-                return predicate;
-            }
-            return cb.or(predicate, cb.like(cb.upper(key), "%" + request.getValue().toString().toUpperCase() + "%"));
+            // Handles both cases: when keys are provided and when a single key is provided
+            List<String> keys = request.getKeys() != null && !request.getKeys().isEmpty() ? request.getKeys() : List.of(request.getKey());
+            keys.forEach(k -> {
+                String[] relations = k.split("\\.");
+                Expression<String> keyExpression = relations.length <= 1 ? root.get(k) : root.join(relations[0]).get(relations[1]);
+                List<Object> values = request.getValues() != null && !request.getValues().isEmpty() ? request.getValues() : List.of(request.getValue());
+
+                values.forEach(value -> predicates.add(cb.like(cb.upper(keyExpression), "%" + value.toString().toUpperCase() + "%")));
+            });
+
+            Predicate combinedPredicate = cb.or(predicates.toArray(new Predicate[0]));
+            return cb.and(predicate, combinedPredicate);
         }
     },
 

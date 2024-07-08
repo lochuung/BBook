@@ -72,7 +72,7 @@ public class BookController {
         if (keyword != null) {
             List<Object> keywords = List.of(keyword.split(" "));
             filters.add(FilterRequest.builder()
-                    .key("title")
+                    .keys(List.of("title", "authors.name"))
                     .operator(Operator.LIKE_OR)
                     .fieldType(FieldType.STRING)
                     .values(keywords)
@@ -82,13 +82,6 @@ public class BookController {
                     .direction(SortDirection.ASC_LIKE)
                     .keys(List.of("title", "authors.name"))
                     .likeValues(keywords)
-                    .build());
-
-            filters.add(FilterRequest.builder()
-                    .key("authors.name")
-                    .operator(Operator.LIKE_OR)
-                    .fieldType(FieldType.STRING)
-                    .values(keywords)
                     .build());
 
             restoredUrl.append("&keyword=").append(keyword);
