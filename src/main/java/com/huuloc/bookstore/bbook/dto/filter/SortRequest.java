@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -15,6 +17,10 @@ import lombok.NoArgsConstructor;
 public class SortRequest {
 
     private String key;
+
+    private List<String> keys;
+
+    private List<Object> likeValues;
 
     private SortDirection direction;
 

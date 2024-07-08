@@ -26,5 +26,7 @@ public class FilterRequest {
 
     private Object valueTo;
 
+    private List<String> keys;
+
     private List<Object> values;
 }

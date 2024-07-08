@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}" lang="vi">
+<th:block layout:fragment="scripts">
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const sortSelect = document.querySelector('select[name="priceSort"]');
+            const ratingSelect = document.querySelector('select[name="ratingSort"]');
+            const soldSelect = document.querySelector('select[name="soldSort"]');
+            const genreCheckboxes = document.querySelectorAll('input[name="genres"]');
+            const priceMinInput = document.querySelector('input[placeholder="Min"]');
+            const priceMaxInput = document.querySelector('input[placeholder="Max"]');
+            const searchButton = document.querySelector('#priceBtn');
+            const currentPage = new URLSearchParams(window.location.search).get('page') || 1;
+            const restoredUrl = window.location.href.replace(/&page=\d+/, '');
+
+            const priceField = "price";
+            const ratingField = "averageRating";
+            const soldField = "totalSold";
+
+            const sort = (field, order) => {
+                const url = new URL(restoredUrl);
+                url.searchParams.set("sortBy", field);
+                url.searchParams.set("sortDirection", order);
+                console.log(url.href);
+                window.location.href = url.href;
+            }
+
+            const filter = () => {
+                const url = new URL(restoredUrl);
+                if (priceMinInput.value) {
+                    url.searchParams.set("priceFrom", priceMinInput.value);
+                } else {
+                    url.searchParams.delete("priceFrom");
+                }
+                if (priceMaxInput.value) {
+                    url.searchParams.set("priceTo", priceMaxInput.value);
+                } else {
+                    url.searchParams.delete("priceTo");
+                }
+                window.location.href = url.href;
+            }
+
+            sortSelect.addEventListener('change', (e) => {
+                const order = e.target.value;
+                if (order === "ASC" || order === "DESC") {
+                    sort(priceField, order);
+                }
+            });
+
+            ratingSelect.addEventListener('change', (e) => {
+                const order = e.target.value;
+                if (order === "ASC" || order === "DESC") {
+                    sort(ratingField, order);
+                }
+            });
+
+            soldSelect.addEventListener('change', (e) => {
+                const order = e.target.value;
+                if (order === "ASC" || order === "DESC") {
+                    sort(soldField, order);
+                }
+            });
+
+            genreCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const url = new URL(restoredUrl);
+                    const genres = Array.from(genreCheckboxes)
+                        .filter(checkbox => checkbox.checked)
+                        .map(checkbox => checkbox.value)
+                        .join(",");
+                    url.searchParams.set("genres", genres);
+                    window.location.href = url.href;
+                });
+            });
+
+            searchButton.addEventListener('click', filter);
+
+            // auto check genre checkboxes based on url
+            const urlParams = new URLSearchParams(window.location.search);
+            const genres = urlParams.get('genres');
+            if (genres) {
+                let genreArray = genres.split(",");
+                if (!genreArray) genreArray = genres.split("%2C");
+                genreArray.forEach(genre => {
+                    const checkbox = document.getElementById(`genre-${genre}`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            }
+
+            // auto fill price min and max based on url
+            const minPrice = urlParams.get('priceFrom');
+            const maxPrice = urlParams.get('priceTo');
+            if (minPrice) {
+                priceMinInput.value = minPrice;
+            }
+            if (maxPrice) {
+                priceMaxInput.value = maxPrice;
+            }
+
+            // auto select sort based on url
+            const sortBy = urlParams.get('sortBy');
+            const sortDirection = urlParams.get('sortDirection');
+            if (sortBy && sortDirection) {
+                if (sortBy === priceField) {
+                    sortSelect.value = sortDirection;
+                } else if (sortBy === ratingField) {
+                    ratingSelect.value = sortDirection;
+                } else if (sortBy === soldField) {
+                    soldSelect.value = sortDirection;
+                }
+            }
+        });
+    </script>
+</th:block>
+<th:block layout:fragment="content">
+    <section class="pt-5 pb-9">
+        <div class="product-filter-container">
+            <button
+                    class="btn btn-sm btn-phoenix-secondary text-body-tertiary mb-5 d-lg-none"
+                    data-phoenix-toggle="offcanvas"
+                    data-phoenix-target="#productFilterColumn"><span
+                    class="fa-solid fa-filter me-2"></span>Tìm kiếm
+            </button>
+            <div class="row">
+                <div class="col-lg-3 col-xxl-2 ps-2 ps-xxl-3">
+                    <div class="phoenix-offcanvas-filter bg-body scrollbar phoenix-offcanvas phoenix-offcanvas-fixed"
+                         id="productFilterColumn" style="top: 92px">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="mb-0">Tìm kiếm</h3>
+                            <button class="btn d-lg-none p-0" data-phoenix-dismiss="offcanvas"><span
+                                    class="uil uil-times fs-8"></span></button>
+                        </div>
+
+                        <!-- sort -->
+                        <a class="btn px-0 d-block collapse-indicator" data-bs-toggle="collapse" href="#collapseSort"
+                           role="button" aria-expanded="true" aria-controls="collapseSort">
+                            <div class="d-flex align-items-center justify-content-between w-100">
+                                <div class="fs-8 text-body-highlight">Sắp xếp</div>
+                                <span
+                                        class="fa-solid fa-angle-down toggle-icon text-body-quaternary"></span>
+                            </div>
+                        </a>
+                        <div class="collapse show" id="collapseSort">
+                            <div class="mb-2">
+                                <select name="priceSort" class="form-select mb-2">
+                                    <option selected="">-- Sắp theo giá --</option>
+                                    <option value="ASC">Giá tăng dần</option>
+                                    <option value="DESC">Giá giảm dần</option>
+                                </select>
+                                <select name="soldSort" class="form-select mb-2">
+                                    <option selected="">-- Sắp theo lượt bán --</option>
+                                    <option value="ASC">Bán ít</option>
+                                    <option value="DESC">Bán nhiều</option>
+                                </select>
+                                <select name="ratingSort" class="form-select mb-0">
+                                    <option selected="">-- Sắp theo đánh giá --</option>
+                                    <option value="ASC">Đánh giá thấp</option>
+                                    <option value="DESC">Đánh giá cao</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Price -->
+                        <a class="btn px-0 d-block collapse-indicator" data-bs-toggle="collapse"
+                           href="#collapsePriceRange"
+                           role="button" aria-expanded="true" aria-controls="collapsePriceRange">
+                            <div class="d-flex align-items-center justify-content-between w-100">
+                                <div class="fs-8 text-body-highlight">Giá</div>
+                                <span
+                                        class="fa-solid fa-angle-down toggle-icon text-body-quaternary"></span>
+                            </div>
+                        </a>
+                        <div class="collapse show" id="collapsePriceRange">
+                            <div class="d-flex justify-content-between mb-3">
+                                <div class="input-group me-2">
+                                    <input class="form-control" type="text"
+                                           aria-label="First name"
+                                           placeholder="Min">
+                                    <input class="form-control"
+                                           type="text"
+                                           aria-label="Last name"
+                                           placeholder="Max"></div>
+                                <button class="btn btn-phoenix-primary px-3" type="button" id="priceBtn">Tìm</button>
+                            </div>
+                        </div>
+
+
+                        <!-- Genre -->
+                        <a class="btn px-0 d-block collapse-indicator" data-bs-toggle="collapse"
+                           href="#collapseGenre"
+                           role="button" aria-expanded="true" aria-controls="collapseGenre">
+                            <div class="d-flex align-items-center justify-content-between w-100">
+                                <div class="fs-8 text-body-highlight">Thể loại</div>
+                                <span
+                                        class="fa-solid fa-angle-down toggle-icon text-body-quaternary"></span>
+                            </div>
+                        </a>
+                        <div class="collapse show" id="collapseGenre">
+                            <div class="mb-2">
+                                <!--/*@thymesVar id="genres" type="java.util.List<com.huuloc.bookstore.bbook.entity.Genre>"*/-->
+                                <div class="form-check mb-0" th:each="genre : ${genres}">
+                                    <input class="form-check-input mt-0" th:id="${'genre-'+genre.id}"
+                                           th:value="${genre.id}"
+                                           type="checkbox"
+                                           name="genres">
+                                    <label class="form-check-label d-block lh-sm fs-8 text-body fw-normal mb-0"
+                                           th:for="${genre.slug}" th:text="${genre.name}"></label>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="phoenix-offcanvas-backdrop d-lg-none" data-phoenix-backdrop style="top: 92px"></div>
+                </div>
+                <div class="col-lg-9 col-xxl-10">
+                    <div class="row gx-3 gy-6 mb-8">
+                        <div class="col-12 col
+                        d-flex justify-content-center" th:if="${totalPages <= 0}">
+                            <div class="alert alert-warning" role="alert">
+                                <span class="fas fa-exclamation-triangle me-2"></span>
+                                Không tìm thấy sách
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 col-xxl-2"
+                             th:each="book : ${books}">
+                            <div class="product-card-container h-100" th:with="nonStars=${5 - book.averageRating}">
+                                <div class="position-relative text-decoration-none product-card h-100">
+                                    <div class="d-flex flex-column justify-content-between h-100">
+                                        <div>
+                                            <div class="border border-1 border-translucent
+                                            rounded-3 position-relative mb-3 text-center">
+                                                <img class="img-fluid"
+                                                     th:src="${book.thumbnailUrl}" alt=""/></div>
+                                            <a class="stretched-link"
+                                               th:href="@{/book/{slug}(slug=${book.slug})}">
+                                                <h6 class="mb-2 lh-sm line-clamp-3 product-name"
+                                                    th:text="${book.title}">
+                                                </h6>
+                                            </a>
+                                            <p class="fs-9"> <span
+                                                    th:each="i : ${#numbers.sequence(1, book.averageRating, 1)}"
+                                                    class="fa fa-star text-warning"></span>
+                                                <span th:each="i : ${#numbers.sequence(1, nonStars, 1)}"
+                                                      class="fa-regular fa-star text-warning-light"></span>
+                                                <span
+                                                        class="text-body-quaternary fw-semibold ms-1"
+                                                        th:text="${book.totalRating + ' đánh giá'}"></span>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <div class="d-flex align-items-center mb-1">
+                                                <p class="me-2 text-body mb-0"
+                                                   th:inline="text">
+                                                    [[${#numbers.formatDecimal(book.price, 0, 'POINT', 0,
+                                                    'COMMA')}]] ₫
+                                                </p>
+                                            </div>
+                                            <p class="text-success fw-bold fs-9 lh-1 mb-0"
+                                               th:text="${'Đã bán: ' + book.totalSold}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end" th:if="${totalPages > 0}">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination mb-0">
+                                <li class="page-item">
+                                    <a class="page-link" th:href="${restoredUrl +
+                                    '&page=' + (1)}"
+                                       th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                                        <span class="fas fa-angles-left"> </span>
+                                    </a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" th:href="${restoredUrl +
+                                    '&page=' + (currentPage - 1)}"
+                                       th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                                        <span class="fas fa-chevron-left"> </span>
+                                    </a>
+                                </li>
+
+
+                                <li class="page-item" th:each="number : ${pageNumbers}">
+                                    <a class="page-link"
+                                       th:href="${restoredUrl + '&page=' + number}"
+                                       th:attrappend="aria-current=${number == currentPage} ? 'page' : ''"
+                                       th:classappend="${number == currentPage} ? 'active' : ''"
+                                       th:styleappend="${number == currentPage} ? 'pointer-events: none;' : ''"
+                                       th:text="${number}"
+                                    ></a>
+                                </li>
+
+
+                                <li class="page-item">
+                                    <a class="page-link" th:href="${restoredUrl +
+                                    '&page=' + (totalPages > currentPage ? currentPage + 1 : currentPage)}"
+                                       th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                                        <span class="fas fa-chevron-right"></span></a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" th:href="${restoredUrl +
+                                    '&page=' + (totalPages)}"
+                                       th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                                        <span class="fas fa-angles-right"></span></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div><!-- end of .container-->
+    </section>
+</th:block>
+</html>
