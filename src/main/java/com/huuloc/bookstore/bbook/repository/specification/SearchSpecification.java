@@ -34,6 +34,9 @@ public class SearchSpecification<T> implements Specification<T> {
             predicate = filter.getOperator().build(root, cb, filter, predicate);
         }
 
+        if ("select_distinct".equals(this.request.getSearchType())) {
+            query.distinct(true);
+        }
 
         List<Order> orders = new ArrayList<>();
         for (SortRequest sort : this.request.getSorts()) {

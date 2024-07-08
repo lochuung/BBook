@@ -78,11 +78,11 @@ public class BookController {
                     .values(keywords)
                     .build());
 
-            sorts.add(SortRequest.builder()
-                    .direction(SortDirection.ASC_LIKE)
-                    .keys(List.of("title", "authors.name"))
-                    .likeValues(keywords)
-                    .build());
+//            sorts.add(SortRequest.builder()
+//                    .direction(SortDirection.ASC_LIKE)
+//                    .keys(List.of("title", "authors.name"))
+//                    .likeValues(keywords)
+//                    .build());
 
             restoredUrl.append("&keyword=").append(keyword);
         }
@@ -139,6 +139,7 @@ public class BookController {
         SearchRequest searchRequest = SearchRequest.builder()
                 .filters(filters)
                 .sorts(sorts)
+                .searchType("select_distinct")
                 .page(currentPage - 1)
                 .size(pageSize)
                 .build();

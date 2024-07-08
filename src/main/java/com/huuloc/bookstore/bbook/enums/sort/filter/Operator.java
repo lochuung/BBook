@@ -1,10 +1,7 @@
 package com.huuloc.bookstore.bbook.enums.sort.filter;
 
 import com.huuloc.bookstore.bbook.dto.filter.FilterRequest;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -57,21 +54,21 @@ public enum Operator {
 
     LIKE_OR {
         public <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
-            List<Predicate> predicates = new ArrayList<>();
+    List<Predicate> predicates = new ArrayList<>();
 
-            // Handles both cases: when keys are provided and when a single key is provided
-            List<String> keys = request.getKeys() != null && !request.getKeys().isEmpty() ? request.getKeys() : List.of(request.getKey());
-            keys.forEach(k -> {
-                String[] relations = k.split("\\.");
-                Expression<String> keyExpression = relations.length <= 1 ? root.get(k) : root.join(relations[0]).get(relations[1]);
-                List<Object> values = request.getValues() != null && !request.getValues().isEmpty() ? request.getValues() : List.of(request.getValue());
+    // Handles both cases: when keys are provided and when a single key is provided
+    List<String> keys = request.getKeys() != null && !request.getKeys().isEmpty() ? request.getKeys() : List.of(request.getKey());
+    keys.forEach(k -> {
+        String[] relations = k.split("\\.");
+        Expression<String> keyExpression = relations.length <= 1 ? root.get(k) : root.join(relations[0], JoinType.LEFT).get(relations[1]);
+        List<Object> values = request.getValues() != null && !request.getValues().isEmpty() ? request.getValues() : List.of(request.getValue());
 
-                values.forEach(value -> predicates.add(cb.like(cb.upper(keyExpression), "%" + value.toString().toUpperCase() + "%")));
-            });
+        values.forEach(value -> predicates.add(cb.like(cb.upper(keyExpression), "%" + value.toString().toUpperCase() + "%")));
+    });
 
-            Predicate combinedPredicate = cb.or(predicates.toArray(new Predicate[0]));
-            return cb.and(predicate, combinedPredicate);
-        }
+    Predicate combinedPredicate = cb.or(predicates.toArray(new Predicate[0]));
+    return cb.and(predicate, combinedPredicate);
+}
     },
 
     IN {
