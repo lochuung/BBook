@@ -63,6 +63,13 @@ public enum Operator {
             } else {
                 key = root.join(relations[0]).get(relations[1]);
             }
+
+            if (request.getValues() != null && !request.getValues().isEmpty()) {
+                for (Object value : request.getValues()) {
+                    predicate = cb.or(predicate, cb.like(cb.upper(key), "%" + value.toString().toUpperCase() + "%"));
+                }
+                return predicate;
+            }
             return cb.or(predicate, cb.like(cb.upper(key), "%" + request.getValue().toString().toUpperCase() + "%"));
         }
     },

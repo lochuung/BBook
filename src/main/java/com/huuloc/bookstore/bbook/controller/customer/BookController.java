@@ -65,24 +65,30 @@ public class BookController {
             direction = SortDirection.DESC;
         }
 
-        StringBuilder restoredUrl = new StringBuilder("/book/search?size=" + pageSize
-                + "&sortBy=" + sort
-                + "&sortDirection=" + direction);
+        StringBuilder restoredUrl = new StringBuilder("/book/search?size=" + pageSize);
 
         List<FilterRequest> filters = new ArrayList<>();
+        List<SortRequest> sorts = new ArrayList<>();
         if (keyword != null) {
+            List<Object> keywords = List.of(keyword.split(" "));
             filters.add(FilterRequest.builder()
                     .key("title")
                     .operator(Operator.LIKE_OR)
                     .fieldType(FieldType.STRING)
-                    .value(keyword)
+                    .values(keywords)
+                    .build());
+
+            sorts.add(SortRequest.builder()
+                    .direction(SortDirection.ASC_LIKE)
+                    .keys(List.of("title", "authors.name"))
+                    .likeValues(keywords)
                     .build());
 
             filters.add(FilterRequest.builder()
                     .key("authors.name")
-                    .operator(Operator.LIKE)
+                    .operator(Operator.LIKE_OR)
                     .fieldType(FieldType.STRING)
-                    .value(keyword)
+                    .values(keywords)
                     .build());
 
             restoredUrl.append("&keyword=").append(keyword);
@@ -128,16 +134,22 @@ public class BookController {
 
             restoredUrl.append("&priceTo=").append(priceTo.get());
         }
+        if (sortBy.isPresent()) {
+            sorts.add(SortRequest.builder()
+                    .key(sort)
+                    .direction(direction)
+                    .build());
+            restoredUrl.append("&sortBy=").append(sort);
+            restoredUrl.append("&sortDirection=").append(direction);
+        }
 
         SearchRequest searchRequest = SearchRequest.builder()
                 .filters(filters)
-                .sorts(List.of(SortRequest.builder()
-                        .key(sort)
-                        .direction(direction)
-                        .build()))
+                .sorts(sorts)
                 .page(currentPage - 1)
                 .size(pageSize)
                 .build();
+
         Page<Book> books = bookService.search(searchRequest);
         int totalPages = books.getTotalPages();
         if (totalPages > 0) {

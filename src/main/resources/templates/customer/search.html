@@ -32,9 +32,13 @@
                 const url = new URL(restoredUrl);
                 if (priceMinInput.value) {
                     url.searchParams.set("priceFrom", priceMinInput.value);
+                } else {
+                    url.searchParams.delete("priceFrom");
                 }
                 if (priceMaxInput.value) {
                     url.searchParams.set("priceTo", priceMaxInput.value);
+                } else {
+                    url.searchParams.delete("priceTo");
                 }
                 window.location.href = url.href;
             }
@@ -215,6 +219,13 @@
                 </div>
                 <div class="col-lg-9 col-xxl-10">
                     <div class="row gx-3 gy-6 mb-8">
+                        <div class="col-12 col
+                        d-flex justify-content-center" th:if="${totalPages <= 0}">
+                            <div class="alert alert-warning" role="alert">
+                                <span class="fas fa-exclamation-triangle me-2"></span>
+                                Không tìm thấy sách
+                            </div>
+                        </div>
                         <div class="col-12 col-sm-6 col-md-4 col-xxl-2"
                              th:each="book : ${books}">
                             <div class="product-card-container h-100" th:with="nonStars=${5 - book.averageRating}">

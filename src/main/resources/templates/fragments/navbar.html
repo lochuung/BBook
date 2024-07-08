@@ -122,7 +122,7 @@
                                         let actionUrl = document.getElementById('action-url').value;
                                         if (actionUrl.includes('keyword=')) {
                                             // remove old keyword
-                                            actionUrl = actionUrl.replace(/keyword=[^&]*/g, '');
+                                            actionUrl = actionUrl.replace(/[&|?]keyword=[^&]*/g, '');
                                         }
                                         if (actionUrl.includes('?')) {
                                             actionUrl = actionUrl + '&keyword=' + keyword;
