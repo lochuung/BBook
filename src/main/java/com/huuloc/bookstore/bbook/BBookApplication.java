@@ -17,8 +17,8 @@ public class BBookApplication {
 	@Bean
 	CommandLineRunner commandLineRunner(MigrateService migrateService) {
 		return args -> {
-			migrateService.migrateBooksData();
-			migrateService.migrateUsersData();
+//			migrateService.migrateBooksData();
+//			migrateService.migrateUsersData();
 		};
 	}
 

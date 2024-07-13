@@ -58,7 +58,7 @@ public class BookController {
                          @RequestParam("priceFrom") Optional<Double> priceFrom,
                          @RequestParam("priceTo") Optional<Double> priceTo) {
         int currentPage = page.orElse(1);
-        int pageSize = size.orElse(12);
+        int pageSize = size.orElse(18);
         String sort = sortBy.orElse("id");
         SortDirection direction = SortDirection.ASC;
         if ("DESC".equals(sortDirection.orElse(null))) {
