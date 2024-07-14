@@ -2,16 +2,16 @@ version: '3.8'
 
 services:
   mysqldb:
-    image: mysql:8.4
+    image: mysql:9.0
     restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bbook
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: root
     ports:
       - '3307:3306'
     expose:
       - '3307'
-    environment:
-      MYSQL_DATABASE: bbook
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: dev
-      MYSQL_PASSWORD: root
     volumes:
       - D:\dev\data\mysql:/var/lib/mysql

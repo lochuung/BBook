@@ -7,7 +7,7 @@ import com.huuloc.bookstore.bbook.repository.AuthorRepository;
 import com.huuloc.bookstore.bbook.repository.BookRepository;
 import com.huuloc.bookstore.bbook.repository.GenreRepository;
 import com.huuloc.bookstore.bbook.service.auth.UserService;
-import com.huuloc.bookstore.bbook.util.SlugUtil;
+import com.huuloc.bookstore.bbook.util.SlugUtils;
 import com.nimbusds.jose.util.IOUtils;
 import jakarta.transaction.Transactional;
 import net.minidev.json.JSONArray;
@@ -78,7 +78,7 @@ public class MigrateService {
             genresJson.forEach(genre -> {
                 Genre genreEntity = Genre.builder()
                         .name((String) genre)
-                        .slug((SlugUtil.toSlug((String) genre)))
+                        .slug((SlugUtils.toSlug((String) genre)))
                         .build();
                 if (StringUtils.isEmpty(genreEntity.getName())) {
                     return;
@@ -103,7 +103,7 @@ public class MigrateService {
             String longDescription = (String) jsonObject.get("longDescription");
             // random price from 30.000 to 170.000
             double price = Math.random() * 170000 + 30000;
-            String slug = SlugUtil.toSlug(title);
+            String slug = SlugUtils.toSlug(title);
             Book book = bookRepository.findBySlug(slug);
             if (book != null) {
                 continue;

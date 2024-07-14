@@ -1,5 +1,12 @@
 package com.huuloc.bookstore.bbook.util;
 
+import com.huuloc.bookstore.bbook.entity.Book;
+import com.huuloc.bookstore.bbook.entity.Order;
+import com.huuloc.bookstore.bbook.entity.OrderItem;
+import com.huuloc.bookstore.bbook.entity.enums.OrderState;
+import com.huuloc.bookstore.bbook.repository.BookRepository;
+import com.huuloc.bookstore.bbook.repository.OrderRepository;
+import jakarta.transaction.Transactional;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 

@@ -48,9 +48,9 @@ public class UserServiceImpl implements UserService {
         Role roleAdmin = roleRepository.save(Role.builder().name("ADMIN")
                 .privileges(Collections.singletonList(privilege2)).build());
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        userRepository.save(User.builder().username("user").email("user@cnj.vn").password(passwordEncoder.encode("123")).roles(Collections.singletonList(roleUser)).build());
+        userRepository.save(User.builder().username("user").email("user@gmail.com").password(passwordEncoder.encode("123")).roles(Collections.singletonList(roleUser)).build());
 
-        userRepository.save(User.builder().username("admin").email("admin@cnj.vn").password(passwordEncoder.encode("123")).roles(Collections.singletonList(roleAdmin)).build());
+        userRepository.save(User.builder().username("admin").email("admin@gmail.com").password(passwordEncoder.encode("123")).roles(Collections.singletonList(roleAdmin)).build());
     }
 
     @Override

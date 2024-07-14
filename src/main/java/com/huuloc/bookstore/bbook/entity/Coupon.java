@@ -26,10 +26,9 @@ public class Coupon extends BaseEntity {
     private Double maxOrderValue;
     private Double minOrderValue;
     private Integer maxUse;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Integer currentUse;
+    @Version
+    private Long version;
 
     @OneToMany(mappedBy = "coupon")
     private Collection<Order> orders;

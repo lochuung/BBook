@@ -6,4 +6,6 @@ public interface PaymentService {
                              String cancelUrl) throws Exception;
 
     Long updatePaymentStatus(String orderCode) throws Exception;
+
+    void scheduleCancelOrder();
 }
