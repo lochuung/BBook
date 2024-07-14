@@ -90,10 +90,10 @@ public class CartController implements WebMvcConfigurer {
 
     @PostMapping("/checkout")
     public String checkout(@RequestParam("paymentMethod") PaymentType paymentType) {
-        Order order = cartService.checkout(paymentType);
+        Long orderId = cartService.checkout(paymentType);
         if (paymentType == PaymentType.ONLINE) {
-            return "redirect:/payment/order/" + order.getId();
+            return "redirect:/payment/order/" + orderId;
         }
-        return "redirect:/order/" + order.getId();
+        return "redirect:/order/" + orderId;
     }
 }

@@ -3,7 +3,7 @@ package com.huuloc.bookstore.bbook.util;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class SlugUtil {
+public class SlugUtils {
     public static String toSlug(String input) {
         // Vietnamese to English
         input = input.replaceAll("đ", "d");

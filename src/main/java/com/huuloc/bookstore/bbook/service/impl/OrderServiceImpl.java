@@ -9,6 +9,7 @@ import com.huuloc.bookstore.bbook.exception.BadRequestException;
 import com.huuloc.bookstore.bbook.repository.BookRepository;
 import com.huuloc.bookstore.bbook.repository.OrderRepository;
 import com.huuloc.bookstore.bbook.repository.UserRepository;
+import com.huuloc.bookstore.bbook.repository.custom.CustomOrderRepository;
 import com.huuloc.bookstore.bbook.service.OrderService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,8 @@ public class OrderServiceImpl implements OrderService {
     private UserRepository userRepository;
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private CustomOrderRepository customOrderRepository;
 
     @Override
     @Transactional
@@ -77,21 +80,7 @@ public class OrderServiceImpl implements OrderService {
         if (!order.getUser().getEmail().equals(email)) {
             return;
         }
-        if (order.getState() != OrderState.PAYMENT &&
-                (order.getState() != OrderState.PENDING ||
-                        order.getPaymentType() != PaymentType.COD)
-        ) {
-            return;
-        }
-        for (OrderItem item : order.getOrderItems()) {
-            Book book = bookRepository.findByIdWithLock(item.getBook().getId());
-            book.setAvailableQuantity(book.getAvailableQuantity() + item.getQuantity());
-            book.setTotalSold(book.getTotalSold() - item.getQuantity());
-            item.setBook(book);
-            bookRepository.save(book);
-        }
-        order.setState(OrderState.CANCELLED);
-        orderRepository.save(order);
+        customOrderRepository.cancelOrder(orderId);
     }
 
     @Override
