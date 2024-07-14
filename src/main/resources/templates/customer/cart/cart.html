@@ -2,10 +2,58 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}">
+<th:block layout:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const couponInput = document.getElementById('coupon-input');
+            const couponSubmit = document.getElementById('coupon-submit');
+            const addCouponUrl = 'api/coupons/add';
+            const cancelCouponUrl = 'api/coupons/cancel';
+
+            const addCoupon = async (couponCode) => {
+                const body = {
+                    orderId: document.getElementById('orderId').value,
+                    code: couponCode
+                }
+                const response = await fetch(addCouponUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+                if (response.ok) {
+                    // reload page
+                    window.location.reload();
+                }
+            };
+
+            const cancelCoupon = async () => {
+                const response = await fetch(cancelCouponUrl +
+                    `/${document.getElementById('orderId').value}`, {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    // reload page
+                    window.location.reload();
+                }
+            };
+
+            couponSubmit.addEventListener('click', () => {
+                addCoupon(couponInput.value);
+            });
+
+            document.getElementById('cancel-coupon').addEventListener('click', () => {
+                cancelCoupon();
+            });
+        });
+    </script>
+</th:block>
 <th:block layout:fragment="content">
     <section class="pt-5 pb-9">
         <div class="container-small cart">
             <h2 class="mb-6">Giỏ hàng</h2>
+            <!--/*@thymesVar id="newOrder" type="com.huuloc.bookstore.bbook.entity.Order"*/-->
             <div class="row g-5">
                 <div class="col-12 col-lg-8">
                     <div id="cartTable"
@@ -26,7 +74,7 @@
                                 </tr>
                                 </thead>
                                 <tbody class="list" id="cart-table-body">
-                                <!--/*@thymesVar id="newOrder" type="com.huuloc.bookstore.bbook.entity.Order"*/-->
+                                <input type="hidden" id="orderId" th:value="${newOrder.id}"/>
                                 <tr class="cart-table-row btn-reveal-trigger"
                                     th:if="${newOrder.quantity == 0}">
                                     <td class="text-body-emphasis fw-semibold ps-0 fs-8" colspan="6">Giỏ hàng trống</td>
@@ -114,9 +162,24 @@
                                     </p>
                                 </div>
                             </div>
-                            <div class="input-group mb-3"><input class="form-control" type="text"
+                            <div class="input-group mb-3"><input id="coupon-input" class="form-control" type="text"
                                                                  placeholder="Mã giảm giá"/>
-                                <button class="btn btn-phoenix-primary px-5">Áp dụng</button>
+                                <button class="btn btn-phoenix-primary px-5" type="button"
+                                        id="coupon-submit">Áp dụng
+                                </button>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3"
+                                 th:if="${newOrder.coupon != null}">
+                                <p class="text-body fw-semibold my-auto">Mã giảm giá :</p>
+                                <p class="text-body-emphasis fw-semibold my-auto"
+                                   th:text="${newOrder.coupon.code}"></p>
+                                <div class="my-auto">
+                                    <button class="btn btn-sm text-body-tertiary my-auto text-opacity-85 text-body-tertiary-hover"
+                                            type="button"
+                                            id="cancel-coupon">
+                                        <span class="fas fa-trash"></span>
+                                    </button>
+                                </div>
                             </div>
                             <div class="d-flex justify-content-between border-y border-dashed py-3 mb-4">
                                 <h4 class="mb-0">Tổng cộng :</h4>

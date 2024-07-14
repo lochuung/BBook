@@ -122,10 +122,7 @@ CREATE TABLE IF NOT EXISTS `coupons`
     `min_order_value` double       DEFAULT NULL,
     `type`            tinyint      DEFAULT NULL,
     `value`           double       DEFAULT NULL,
-    `user_id`         bigint       DEFAULT NULL,
     PRIMARY KEY (`id`),
-    KEY `FKhb27gggactdhu0i65fwiaxb0r` (`user_id`),
-    CONSTRAINT `FKhb27gggactdhu0i65fwiaxb0r` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     CONSTRAINT `coupons_chk_1` CHECK ((`type` between 0 and 1))
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4

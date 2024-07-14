@@ -46,9 +46,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<Coupon> coupons;
-
     @ManyToOne
     @JoinColumn(name = "avatar_id")
     private Image avatar;
