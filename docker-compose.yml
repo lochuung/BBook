@@ -3,6 +3,7 @@ version: '3.8'
 services:
   mysqldb:
     image: mysql:9.0
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: bbook
