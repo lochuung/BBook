@@ -6,7 +6,6 @@ import com.huuloc.bookstore.bbook.entity.Genre;
 import com.huuloc.bookstore.bbook.repository.AuthorRepository;
 import com.huuloc.bookstore.bbook.repository.BookRepository;
 import com.huuloc.bookstore.bbook.repository.GenreRepository;
-import com.huuloc.bookstore.bbook.service.auth.UserService;
 import com.huuloc.bookstore.bbook.util.SlugUtils;
 import com.nimbusds.jose.util.IOUtils;
 import jakarta.transaction.Transactional;

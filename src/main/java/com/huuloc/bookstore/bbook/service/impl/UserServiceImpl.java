@@ -10,15 +10,18 @@ import com.huuloc.bookstore.bbook.repository.AddressRepository;
 import com.huuloc.bookstore.bbook.repository.PrivilegeRepository;
 import com.huuloc.bookstore.bbook.repository.RoleRepository;
 import com.huuloc.bookstore.bbook.repository.UserRepository;
+import com.huuloc.bookstore.bbook.service.ImageService;
 import com.huuloc.bookstore.bbook.service.auth.CustomOAuth2User;
-import com.huuloc.bookstore.bbook.service.auth.UserService;
+import com.huuloc.bookstore.bbook.service.UserService;
 import com.huuloc.bookstore.bbook.util.AuthUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -33,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
     @Autowired
     private AddressRepository addressRepository;
+    @Autowired
+    private ImageService imageService;
 
     @Override
     public void createTestingData() {
@@ -121,5 +126,42 @@ public class UserServiceImpl implements UserService {
                 .password(passwordEncoder.encode(password))
                 .build();
         userRepository.save(newUser);
+    }
+
+    @Override
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = AuthUtils.getEmailFromAuthentication(authentication);
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    @Override
+    public void updateProfile(User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = AuthUtils.getEmailFromAuthentication(authentication);
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return;
+        }
+        User u = userOptional.get();
+        u.setFullName(user.getFullName());
+        u.setPhoneNumber(user.getPhoneNumber());
+//        u.setEmail(user.getEmail());
+        u.setBirthday(user.getBirthday());
+        userRepository.save(u);
+    }
+
+    @Override
+    @Transactional
+    public void uploadProfilePicture(MultipartFile file) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = AuthUtils.getEmailFromAuthentication(authentication);
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return;
+        }
+        User user = userOptional.get();
+        user.setAvatar(imageService.upload(file));
+        userRepository.save(user);
     }
 }

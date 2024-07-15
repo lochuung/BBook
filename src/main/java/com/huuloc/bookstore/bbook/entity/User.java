@@ -3,6 +3,7 @@ package com.huuloc.bookstore.bbook.entity;
 import com.huuloc.bookstore.bbook.entity.common.BaseEntity;
 import com.huuloc.bookstore.bbook.entity.enums.Provider;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.List;
@@ -29,7 +30,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Address> addresses;
     @Column(name = "name")
+    @NotBlank(message = "Họ tên không được để trống")
     private String fullName;
+    @NotBlank(message = "Ngày sinh không được để trống")
     private String birthday;
     private String status;
     private boolean enabled;
