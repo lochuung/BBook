@@ -56,6 +56,27 @@ public class ImageService {
         }
     }
 
+    public Image upload(byte[] bytes, String fileName) {
+        try {
+            fileName = UUID.randomUUID().toString().concat(
+                    getExtension(Objects.requireNonNull(fileName)));
+            File file = new File(fileName);
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                fos.write(bytes);
+            }
+            String url = uploadFile(file, fileName);
+            file.delete();
+            Image image = Image.builder()
+                    .name(fileName)
+                    .url(url)
+                    .build();
+            return imageRepository.save(image);
+        } catch (Exception e) {
+            log.error("Error occurred: {0}", e);
+            return null;
+        }
+    }
+
     public Image getImageById(Long id) {
         return imageRepository.findById(id).orElse(null);
     }

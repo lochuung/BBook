@@ -1,10 +1,7 @@
 package com.huuloc.bookstore.bbook.service.impl;
 
 import com.huuloc.bookstore.bbook.dto.RegisterDto;
-import com.huuloc.bookstore.bbook.entity.Address;
-import com.huuloc.bookstore.bbook.entity.Privilege;
-import com.huuloc.bookstore.bbook.entity.Role;
-import com.huuloc.bookstore.bbook.entity.User;
+import com.huuloc.bookstore.bbook.entity.*;
 import com.huuloc.bookstore.bbook.entity.enums.Provider;
 import com.huuloc.bookstore.bbook.repository.AddressRepository;
 import com.huuloc.bookstore.bbook.repository.PrivilegeRepository;
@@ -23,8 +20,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Optional;
+
+import static com.huuloc.bookstore.bbook.util.ImageUtils.getBytesFromUrl;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -59,9 +60,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void processOAuthPostLogin(CustomOAuth2User customOAuth2User) {
+    @Transactional
+    public void processOAuthPostLogin(CustomOAuth2User customOAuth2User) throws MalformedURLException {
         String email = customOAuth2User.getEmail();
         String name = customOAuth2User.getName();
+        String picture = customOAuth2User.getPicture();
 
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isEmpty()) {
@@ -69,10 +72,16 @@ public class UserServiceImpl implements UserService {
             Role roleUser = roleRepository.findByName("USER").orElseThrow(
                     () -> new RuntimeException("Role not found")
             );
+            byte[] avatar = getBytesFromUrl(picture);
+
+            Image image = imageService.upload(avatar, email + ".jpg");
+
             User newUser = User.builder().email(email)
                     .roles(Collections.singletonList(roleUser))
                     .fullName(name)
                     .provider(Provider.OAUTH2)
+                    .birthday(LocalDate.now().toString())
+                    .avatar(image)
                     .enabled(true)
                     .build();
             userRepository.save(newUser);
