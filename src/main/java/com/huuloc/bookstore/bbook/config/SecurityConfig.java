@@ -37,7 +37,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/anonymous*")
                         .anonymous()
                         .requestMatchers("/admin**","/admin/**", "/cart/**", "/cart",
-                                "/order/**")
+                                "/order/**", "/profile")
                         .authenticated()
                         .anyRequest()
                         .permitAll())

@@ -122,4 +122,27 @@ public class UserServiceImpl implements UserService {
                 .build();
         userRepository.save(newUser);
     }
+
+    @Override
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = AuthUtils.getEmailFromAuthentication(authentication);
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    @Override
+    public void updateProfile(User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = AuthUtils.getEmailFromAuthentication(authentication);
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isEmpty()) {
+            return;
+        }
+        User u = userOptional.get();
+        u.setFullName(user.getFullName());
+        u.setPhoneNumber(user.getPhoneNumber());
+//        u.setEmail(user.getEmail());
+        u.setBirthday(user.getBirthday());
+        userRepository.save(u);
+    }
 }

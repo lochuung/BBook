@@ -19,7 +19,7 @@ BEGIN
     IF v_state != 'PAYMENT' AND (v_state != 'PENDING' OR v_payment_type != 'COD') THEN
         ROLLBACK;
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Order cannot be cancelled';
+            SET MESSAGE_TEXT = 'Order cannot be cancelled';
     END IF;
 
     OPEN cur;
@@ -44,6 +44,17 @@ BEGIN
     END LOOP;
 
     CLOSE cur;
+
+    SELECT coupons.current_use
+    INTO @v_total_use
+    FROM coupons
+             JOIN orders ON orders.coupon_id = coupons.id
+    WHERE orders.id = order_id FOR
+    UPDATE;
+
+    UPDATE coupons
+    SET current_use = @v_total_use - 1
+    WHERE coupons.id = (SELECT coupon_id FROM orders WHERE orders.id = order_id);
 
     UPDATE orders SET state = 'CANCELLED' WHERE orders.id = order_id;
     COMMIT;

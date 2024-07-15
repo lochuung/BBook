@@ -90,6 +90,8 @@ public class OrderServiceImpl implements OrderService {
         if (email == null) {
             return null;
         }
-        return orderRepository.findAlByUserEmailAndStateNot(email, OrderState.NEW);
+        return orderRepository.findAlByUserEmailAndStateNot(email, OrderState.NEW)
+                .stream().sorted((o1, o2) -> o2.getCreatedDate().compareTo(o1.getCreatedDate()))
+                .toList();
     }
 }

@@ -5,5 +5,5 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class AppConstants {
 
-    public  static final int PAYMENT_EXPIRATION = 15; // 15 minutes
+    public  static final int PAYMENT_EXPIRATION = 5; // 5 minutes
 }
