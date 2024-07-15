@@ -71,7 +71,7 @@
                                     <div class="col-auto">
                                         <h5 class="text-body-highlight">Địa chỉ</h5>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col-auto" th:if="${address != null}">
                                         <p class="text-body-secondary"
                                            th:inline="text">[[${address.addressLine}]], [[${address.ward}]], <br>
                                             [[${address.district}]], [[${address.province}]]</p>
@@ -83,8 +83,9 @@
                                     <div class="col-auto">
                                         <h5 class="text-body-highlight mb-0">Số điện thoại</h5>
                                     </div>
-                                    <div class="col-auto"><a th:href="${'tell:' + address.phoneNumber}"
-                                                             th:text="${address.phoneNumber}"
+                                    <div class="col-auto" th:if="${address != null}"><a
+                                            th:href="${'tell:' + address.phoneNumber}"
+                                            th:text="${address.phoneNumber}"
                                     ></a></div>
                                 </div>
                             </div>
