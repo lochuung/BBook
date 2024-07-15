@@ -1,7 +1,7 @@
 package com.huuloc.bookstore.bbook.config;
 
 import com.huuloc.bookstore.bbook.service.auth.CustomOAuth2User;
-import com.huuloc.bookstore.bbook.service.auth.UserService;
+import com.huuloc.bookstore.bbook.service.UserService;
 import com.huuloc.bookstore.bbook.service.auth.CustomOAuth2UserService;
 import com.huuloc.bookstore.bbook.service.auth.CustomUserDetailsService;
 import com.nimbusds.jose.JOSEException;

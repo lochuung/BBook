@@ -2,6 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/layout}" lang="vi">
+<th:block layout:fragment="scripts">
+    <script>
+        document.getElementById('avatarFile').addEventListener('change', function () {
+            this.form.submit();
+        });
+    </script>
+</th:block>
 <th:block layout:fragment="content">
     <section class="pt-5 pb-9">
         <div class="container-small">
@@ -25,11 +32,20 @@
                         <div class="card-body">
                             <div class="">
                                 <div class="row align-items-center g-3 g-sm-5 text-center text-sm-start">
-                                    <div class="col-12 col-sm-auto"><input class="d-none" id="avatarFile"
-                                                                           type="file"/><label
-                                            class="cursor-pointer avatar avatar-5xl" for="avatarFile"><img
-                                            class="rounded-circle"
-                                            src="../../../assets/img/team/15.webp" alt=""/></label></div>
+                                    <div class="col-12 col-sm-auto">
+                                        <form th:action="@{/profile/upload}" method="post"
+                                              enctype="multipart/form-data">
+                                            <input class="d-none" id="avatarFile"
+                                                   name="file"
+                                                   type="file"/>
+                                            <label
+                                                    class="cursor-pointer avatar avatar-5xl" for="avatarFile">
+                                                <img class="rounded-circle"
+                                                     th:src="${user.avatar != null ? user.avatar.url : '/assets/img/user.png'}"
+                                                     alt=""/>
+                                            </label>
+                                        </form>
+                                    </div>
                                     <div class="col-12 col-sm-auto flex-1">
                                         <h3 th:text="${user.fullName}"></h3>
                                         <p class="text-body-secondary" th:inline="text">

@@ -53,20 +53,25 @@
                                      aria-labelledby="navbarDropdownUser">
                                     <div class="card position-relative border-0">
                                         <div class="card-body p-0" sec:authorize="isAuthenticated()">
+                                            <!--/*@thymesVar id="currentUser" type="com.huuloc.bookstore.bbook.entity.User"*/-->
                                             <div class="text-center pt-4 pb-3">
                                                 <!--                                                Avatar-->
                                                 <div class="avatar avatar-xl ">
                                                     <img class="rounded-circle "
-                                                         src="/assets/img/user.png" alt=""/>
+                                                         th:src="${currentUser.avatar != null ? currentUser.avatar.url
+                                                         : '/assets/img/user.png'}"
+                                                         alt=""/>
                                                 </div>
-                                                <h6 class="mt-2 text-body-emphasis" sec:authentication="name">Nguyen Huu
+                                                <h6 class="mt-2 text-body-emphasis"
+                                                    th:text="${currentUser.fullName}">Nguyen Huu
                                                     Loc</h6>
                                             </div>
                                         </div>
                                         <div class="overflow-auto scrollbar" style="height: 5rem;"
                                              sec:authorize="isAuthenticated()">
                                             <ul class="nav d-flex flex-column mb-2 pb-1">
-                                                <li class="nav-item"><a class="nav-link px-3 d-block" th:href="@{/profile}">
+                                                <li class="nav-item"><a class="nav-link px-3 d-block"
+                                                                        th:href="@{/profile}">
                                                                 <span class="me-2 text-body align-bottom"
                                                                       data-feather="user"></span><span>Sửa thông
                                                                     tin</span></a></li>

@@ -1,7 +1,7 @@
 package com.huuloc.bookstore.bbook.controller;
 
 import com.huuloc.bookstore.bbook.dto.RegisterDto;
-import com.huuloc.bookstore.bbook.service.auth.UserService;
+import com.huuloc.bookstore.bbook.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

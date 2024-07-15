@@ -6,7 +6,7 @@ import com.huuloc.bookstore.bbook.entity.Order;
 import com.huuloc.bookstore.bbook.entity.enums.PaymentType;
 import com.huuloc.bookstore.bbook.service.CartService;
 import com.huuloc.bookstore.bbook.service.OrderService;
-import com.huuloc.bookstore.bbook.service.auth.UserService;
+import com.huuloc.bookstore.bbook.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
