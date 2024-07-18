@@ -25,6 +25,9 @@
                 if (response.ok) {
                     // reload page
                     window.location.reload();
+                } else {
+                    const data = await response.json();
+                    alert(data.detail);
                 }
             };
 
@@ -99,13 +102,13 @@
                                     <td class="quantity align-middle fs-8 ps-5">
                                         <div class="input-group input-group-sm flex-nowrap"
                                              data-quantity="data-quantity">
-                                            <button class="btn btn-sm px-2" data-type="minus">-</button>
+<!--                                            <button class="btn btn-sm px-2" data-type="minus">-</button>-->
                                             <input class="form-control text-center input-spin-none bg-transparent border-0 px-0"
                                                    type="number" min="1"
-                                                   style="width: 30px"
+                                                   style="width: 30px" readonly
                                                    data-th-attr="value=${orderItem.quantity}"
                                                    aria-label="Amount (to the nearest dollar)"/>
-                                            <button class="btn btn-sm px-2" data-type="plus">+</button>
+<!--                                            <button class="btn btn-sm px-2" data-type="plus">+</button>-->
                                         </div>
                                     </td>
                                     <td class="total align-middle fw-bold text-body-highlight text-end"

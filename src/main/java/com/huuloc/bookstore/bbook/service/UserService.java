@@ -6,10 +6,12 @@ import com.huuloc.bookstore.bbook.entity.User;
 import com.huuloc.bookstore.bbook.service.auth.CustomOAuth2User;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
+
 public interface UserService {
     void createTestingData();
 
-    void processOAuthPostLogin(CustomOAuth2User customOAuth2User);
+    void processOAuthPostLogin(CustomOAuth2User customOAuth2User) throws MalformedURLException;
 
     Address getDefaultAddress();
 

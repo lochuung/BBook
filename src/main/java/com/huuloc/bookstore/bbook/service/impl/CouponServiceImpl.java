@@ -3,6 +3,7 @@ package com.huuloc.bookstore.bbook.service.impl;
 import com.huuloc.bookstore.bbook.entity.Coupon;
 import com.huuloc.bookstore.bbook.entity.Order;
 import com.huuloc.bookstore.bbook.entity.enums.DiscountType;
+import com.huuloc.bookstore.bbook.exception.BadRequestException;
 import com.huuloc.bookstore.bbook.repository.CouponRepository;
 import com.huuloc.bookstore.bbook.repository.OrderRepository;
 import com.huuloc.bookstore.bbook.service.CouponService;
@@ -32,26 +33,26 @@ public class CouponServiceImpl implements CouponService {
         Coupon coupon = couponRepository.findByCodeWithLock(code);
         if (coupon == null) {
             log.info("Coupon not found");
-            return null;
+            throw BadRequestException.message("Mã giảm giá không tồn tại");
         }
         // Check if the coupon is valid
         if (coupon.getExpiredDate().isBefore(LocalDateTime.now())) {
             log.info("Coupon is expired");
-            return null;
+            throw BadRequestException.message("Mã giảm giá đã hết hạn");
         }
         // Check if the coupon is used
         if (coupon.getCurrentUse() >= coupon.getMaxUse()) {
             log.info("Coupon is used up");
-            return null;
+            throw BadRequestException.message("Mã giảm giá đã được sử dụng hết");
         }
         // Check if the coupon is used by this order
         if (order.getCoupon() != null) {
             log.info("Order already has a coupon");
-            return null;
+            throw BadRequestException.message("Mã giảm giá đã được sử dụng cho đơn hàng này");
         }
         if (order.getSubtotal() < coupon.getMinOrderValue() || order.getSubtotal() > coupon.getMaxOrderValue()) {
             log.info("Order value is not valid");
-            return null;
+            throw BadRequestException.message("Giá trị đơn hàng không hợp lệ");
         }
 
         if (coupon.getType() == DiscountType.PERCENT) {

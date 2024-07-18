@@ -85,6 +85,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> findAll() {
+        return orderRepository.findAllByStateNot(OrderState.NEW)
+                .stream().sorted((o1, o2) -> o2.getCreatedDate().compareTo(o1.getCreatedDate()))
+                .toList();
+    }
+
+    @Override
+    public List<Order> findAllCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = getEmailFromAuthentication(authentication);
         if (email == null) {
@@ -93,5 +100,36 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAlByUserEmailAndStateNot(email, OrderState.NEW)
                 .stream().sorted((o1, o2) -> o2.getCreatedDate().compareTo(o1.getCreatedDate()))
                 .toList();
+    }
+
+    @Override
+    public void save(Order order) {
+        orderRepository.save(order);
+    }
+
+    @Override
+    public Order updateState(Long id, String state) {
+        Order order = orderRepository.findById(id).orElse(null);
+        if (order == null) {
+            return null;
+        }
+        if (OrderState.NEW.isState(state)) {
+            return null;
+        }
+        if (OrderState.PAYMENT.isState(state)) {
+            order.setState(OrderState.PAYMENT);
+        } else if (OrderState.PENDING.isState(state)) {
+            order.setState(OrderState.PENDING);
+        } else if (OrderState.SHIPPING.isState(state)) {
+            order.setState(OrderState.SHIPPING);
+        } else if (OrderState.DELIVERED.isState(state)) {
+            order.setState(OrderState.DELIVERED);
+        }
+        return orderRepository.save(order);
+    }
+
+    @Override
+    public void delete(Long id) {
+        orderRepository.deleteById(id);
     }
 }

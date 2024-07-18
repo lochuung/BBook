@@ -1,12 +1,10 @@
 package com.huuloc.bookstore.bbook.controller.customer;
 
-import com.huuloc.bookstore.bbook.dto.filter.SearchRequest;
 import com.huuloc.bookstore.bbook.entity.Order;
 import com.huuloc.bookstore.bbook.service.OrderService;
 import com.huuloc.bookstore.bbook.util.OrderUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +13,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/order")
-public class OrderController {
+public class CustomerOrderController {
     @Autowired
     private OrderService orderService;
 
@@ -32,7 +30,7 @@ public class OrderController {
 
     @GetMapping("/list")
     public String viewOrderList(Model model) {
-        List<Order> orders = orderService.findAll();
+        List<Order> orders = orderService.findAllCurrentUser();
         model.addAttribute("orders", orders);
         return "customer/order-list";
     }

@@ -13,4 +13,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAlByUserEmailAndStateNot(String email, OrderState state);
 
     List<Order> findAllByState(OrderState state);
+
+    List<Order> findAllByStateNot(OrderState state);
 }
