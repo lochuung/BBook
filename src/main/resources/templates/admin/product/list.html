@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/admin-layout}" lang="vi">
+<th:block layout:fragment="content">
+    <div class="mb-9">
+        <div class="row g-3 mb-4">
+            <div class="col-auto">
+                <h2 class="mb-0">Sách</h2>
+            </div>
+        </div>
+        <div id="products"
+             data-list='{"valueNames":["product","price","tags","vendor","time"],"page":10,"pagination":true}'>
+            <div class="mb-4">
+                <div class="d-flex flex-wrap gap-3">
+                    <div class="search-box">
+                        <form class="position-relative">
+                            <input class="form-control search-input search" type="search"
+                                   placeholder="Tìm sách" aria-label="Search"/>
+                            <span class="fas fa-search search-box-icon"></span>
+                        </form>
+                    </div>
+                    <div class="scrollbar overflow-hidden-y">
+                        <div class="btn-group position-static" role="group">
+                            <div class="btn-group position-static text-nowrap">
+                                <button
+                                        class="btn btn-phoenix-secondary px-7 flex-shrink-0" type="button"
+                                        data-bs-toggle="dropdown"
+                                        data-boundary="window" aria-haspopup="true" aria-expanded="false"
+                                        data-bs-reference="parent">
+                                    Category<span class="fas fa-angle-down ms-2"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Action</a></li>
+                                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider"/>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#">Separated link</a></li>
+                                </ul>
+                            </div>
+                            <div class="btn-group position-static text-nowrap">
+                                <button
+                                        class="btn btn-sm btn-phoenix-secondary px-7 flex-shrink-0" type="button"
+                                        data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true"
+                                        aria-expanded="false"
+                                        data-bs-reference="parent"> Vendor<span class="fas fa-angle-down ms-2"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Action</a></li>
+                                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider"/>
+                                    </li>
+                                    <li><a class="dropdown-item" href="#">Separated link</a></li>
+                                </ul>
+                            </div>
+                            <button class="btn btn-sm btn-phoenix-secondary px-7 flex-shrink-0">More filters</button>
+                        </div>
+                    </div>
+                    <div class="ms-xxl-auto">
+                        <button class="btn btn-primary"
+                                id="addBtn"><span class="fas fa-plus me-2"></span>Thêm sách
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div
+                    class="mx-n4 px-4 mx-lg-n6 px-lg-6 bg-body-emphasis border-top border-bottom border-translucent position-relative top-1">
+                <div class="table-responsive scrollbar mx-n1 px-1">
+                    <table class="table fs-9 mb-0">
+                        <thead>
+                        <tr>
+                            <!--                            <th class="sort white-space-nowrap align-middle fs-10" scope="col"></th>-->
+                            <th class="sort white-space-nowrap align-middle text-center ps-4" scope="col"
+                                data-sort="product"> TÊN SÁCH
+                            </th>
+                            <th class="sort align-middle text-center ps-4" scope="col" data-sort="price">GIÁ
+                            </th>
+                            <th class="sort align-middle text-center ps-4" scope="col" data-sort="category">
+                                THỂ LOẠI
+                            </th>
+                            <th class="sort align-middle ps-4 text-center" scope="col" data-sort="time">
+                                NGÀY TẠO
+                            </th>
+                            <th class="sort align-middle pe-0 ps-4" scope="col"></th>
+                        </tr>
+                        </thead>
+                        <tbody class="list" id="products-table-body">
+                        <th:block th:each="book : ${books}">
+                            <tr class="position-static">
+                                <!--                                <td class="align-middle text-center white-space-nowrap py-0"><a-->
+                                <!--                                        class="d-block border border-translucent rounded-2"-->
+                                <!--                                        th:href="@{/book/{slug}(slug=${book.slug})}">-->
+                                <!--                                    <img-->
+                                <!--                                            th:src="${book.thumbnailUrl}" alt="" width="53"/></a></td>-->
+                                <td class="product align-middle ps-4">
+                                    <a class="fw-semibold line-clamp-3 mb-0"
+                                       th:href="@{/book/{slug}(slug=${book.slug})}"
+                                       th:text="${book.title}"
+                                    ></a></td>
+                                <td class="price align-middle white-space-nowrap text-end fw-bold text-body-tertiary ps-4"
+                                    th:inline="text">
+                                    [[${#numbers.formatDecimal(book.price, 0, 'POINT', 0,
+                                    'COMMA')}]] ₫
+                                </td>
+                                <td class="tags align-middle review pb-2 ps-3" style="min-width:225px;">
+                                    <th:block th:each="genre : ${book.genres}">
+                                        <a
+                                                class="text-decoration-none" href="#!"><span
+                                                class="badge badge-tag me-2 mb-2" th:text="${genre.name}"></span>
+                                        </a>
+                                    </th:block>
+                                </td>
+                                <td class="time align-middle white-space-nowrap text-body-tertiary text-opacity-85 ps-4"
+                                    th:text="${#temporals.format(book.createdDate, 'HH:mm dd/MM/yyyy')}">
+                                </td>
+                                <td class="align-middle white-space-nowrap text-end pe-0 ps-4 btn-reveal-trigger">
+                                    <div class="btn-reveal-trigger position-static">
+                                        <button
+                                                class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10"
+                                                type="button" data-bs-toggle="dropdown" data-boundary="window"
+                                                aria-haspopup="true"
+                                                aria-expanded="false" data-bs-reference="parent"><span
+                                                class="fas fa-ellipsis-h fs-10"></span></button>
+                                        <div class="dropdown-menu dropdown-menu-end py-2">
+                                            <a class="dropdown-item"
+                                               th:href="@{/admin/product/edit/{id}(id=${book.id})}">Sửa</a>
+                                            <a class="dropdown-item"
+                                               th:href="@{/admin/product/updateQuantity/{id}(id=${book.id})}">Cập nhật
+                                                số lượng</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item text-danger"
+                                               th:href="@{/admin/product/delete/{id}(id=${book.id})}">Xóa</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row align-items-center justify-content-between py-2 pe-0 fs-9">
+                    <div class="col-auto d-flex">
+                        <p class="mb-0 d-none d-sm-block me-3 fw-semibold text-body"
+                           data-list-info="data-list-info"></p><a
+                            class="fw-semibold" href="#!" data-list-view="*">Xem tất cả<span
+                            class="fas fa-angle-right ms-1"
+                            data-fa-transform="down-1"></span></a><a class="fw-semibold d-none" href="#!"
+                                                                     data-list-view="less">Thu gọn<span
+                            class="fas fa-angle-right ms-1"
+                            data-fa-transform="down-1"></span></a>
+                    </div>
+                    <div class="col-auto d-flex">
+                        <button class="page-link" data-list-pagination="prev"><span
+                                class="fas fa-chevron-left"></span></button>
+                        <ul class="mb-0 pagination"></ul>
+                        <button class="page-link pe-0" data-list-pagination="next"><span
+                                class="fas fa-chevron-right"></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

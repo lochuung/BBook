@@ -5,6 +5,8 @@ import com.huuloc.bookstore.bbook.dto.filter.SearchRequest;
 import com.huuloc.bookstore.bbook.entity.Book;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface BookService {
 
     Page<Book> search(SearchRequest searchRequest);
@@ -12,4 +14,8 @@ public interface BookService {
     TopBooksDto getTopBooks(Integer limit);
 
     Book findBySlug(String slug);
+
+    List<Book> findAll();
+
+    Book findById(Long id);
 }

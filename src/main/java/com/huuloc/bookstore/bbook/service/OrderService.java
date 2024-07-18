@@ -13,4 +13,12 @@ public interface OrderService {
     void cancelOrder(Long orderId);
 
     List<Order> findAll();
+
+    List<Order> findAllCurrentUser();
+
+    void save(Order order);
+
+    Order updateState(Long id, String state);
+
+    void delete(Long id);
 }
